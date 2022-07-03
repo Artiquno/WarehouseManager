@@ -14,4 +14,10 @@ authentication:
   # See https://docs.oracle.com/javase/8/docs/api/java/time/Duration.html#parse-java.lang.CharSequence-
   # for info on the duration format
   duration: "10m"
+  default-user:
+    username: "bob"
+    password: "bobspassword"
+    roles:
+      - "SYSTEM_ADMIN"
+      - "WAREHOUSE_MANAGER"
 

@@ -20,4 +20,10 @@ public class UserController {
         userService.createUser(userInfo);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/create-default")
+    public ResponseEntity<String> createDefaultUser() {
+        userService.createDefaultUser();
+        return ResponseEntity.ok("Default user created. Try not to delete this one...");
+    }
 }

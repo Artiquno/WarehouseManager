@@ -62,7 +62,8 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((authorize) -> authorize
-                        .antMatchers(HttpMethod.POST, "/users").permitAll() // TODO: No! Bad!
+                        // Allow anyone to create a default user
+                        .antMatchers(HttpMethod.POST, "/users/create-default").permitAll()
                         .anyRequest().authenticated())
                 .addFilter(jwtAuthenticationFilter())
                 .addFilter(jwtAuthorizationFilter())

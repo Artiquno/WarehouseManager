@@ -7,7 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.artiquno.warehouse.management.authentication.User;
 import tk.artiquno.warehouse.management.authentication.UserRepo;
 import tk.artiquno.warehouse.management.authentication.UsernameExistsException;
+import tk.artiquno.warehouse.management.authentication.configurations.SecurityProperties;
 import tk.artiquno.warehouse.management.authentication.dto.CreateUserDTO;
+import tk.artiquno.warehouse.management.exceptions.ForbiddenException;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -21,6 +23,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    @Autowired
+    private SecurityProperties securityProperties;
+
     @Override
     public User getUserByUsername(String username) {
         return userRepo.findByUsername(username)
@@ -29,11 +34,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void createUser(CreateUserDTO userInfo) {
-        User user = new User();
         Optional<User> existingUser = userRepo.findByUsername(userInfo.getUsername());
         if(existingUser.isPresent()) {
             throw new UsernameExistsException("A user with this username already exists");
         }
+
+        User user = new User();
         user.setUsername(userInfo.getUsername());
         user.setPassword(passwordEncoder.encode(userInfo.getPassword()));
         user.setRoles(userInfo.getRoles());
@@ -49,5 +55,20 @@ public class UserServiceImpl implements UserService {
         // we will get LazyInitializationException (because then the transaction/session is closed?)
         return user.getRoles().stream()
                 .toList();
+    }
+
+    @Override
+    public void createDefaultUser() {
+        long userCount = userRepo.count();
+        if(userCount > 0)
+        {
+            throw new ForbiddenException("A user already exists");
+        }
+
+        CreateUserDTO user = new CreateUserDTO();
+        user.setUsername(securityProperties.getDefaultUser().getUsername());
+        user.setPassword(securityProperties.getDefaultUser().getPassword());
+        user.setRoles(securityProperties.getDefaultUser().getRoles());
+        createUser(user);
     }
 }

@@ -11,4 +11,12 @@ public interface UserService {
     void createUser(CreateUserDTO userInfo);
 
     List<String> getRolesByUsername(String username);
+
+    /**
+     * Creates a default admin user *if* there are no other users in the db
+     *
+     * @throws tk.artiquno.warehouse.management.exceptions.ForbiddenException if
+     * a user already exists in the database
+     */
+    void createDefaultUser();
 }
