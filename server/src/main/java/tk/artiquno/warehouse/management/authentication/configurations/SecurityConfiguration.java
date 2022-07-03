@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,6 +23,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(securedEnabled = true)
 @ConfigurationPropertiesScan({"tk.artiquno.warehouse.management.authentication.configurations"})
 public class SecurityConfiguration {
     @Autowired
@@ -53,14 +55,15 @@ public class SecurityConfiguration {
     @Bean
     public JWTAuthorizationFilter jwtAuthorizationFilter() {
         return new JWTAuthorizationFilter(authenticationManager());
+        // Only enable if paranoid
+        // return new ParanoidJWTAuthorizationFilter(authenticationManager());
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests()
-                .antMatchers(HttpMethod.POST, "/users").permitAll()
-                .anyRequest().authenticated()
-                .and()
+        http.authorizeHttpRequests((authorize) -> authorize
+                        .antMatchers(HttpMethod.POST, "/users").permitAll() // TODO: No! Bad!
+                        .anyRequest().authenticated())
                 .addFilter(jwtAuthenticationFilter())
                 .addFilter(jwtAuthorizationFilter())
                 .httpBasic(withDefaults())

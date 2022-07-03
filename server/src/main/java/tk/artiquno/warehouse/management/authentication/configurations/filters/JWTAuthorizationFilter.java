@@ -3,6 +3,7 @@ package tk.artiquno.warehouse.management.authentication.configurations.filters;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,17 +11,21 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import tk.artiquno.warehouse.management.authentication.configurations.SecurityProperties;
+import tk.artiquno.warehouse.management.authentication.mappers.StringToGrantedAuthorityMapper;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     @Autowired
     private SecurityProperties securityProperties;
+
+    @Autowired
+    private StringToGrantedAuthorityMapper rolesMapper;
 
     public JWTAuthorizationFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);
@@ -51,24 +56,38 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         if(token != null)
         {
             String user;
+            List<String> roles;
+            DecodedJWT verify;
             try
             {
-                user = JWT.require(Algorithm.HMAC512(securityProperties.getSecret()))
+                verify = JWT.require(Algorithm.HMAC512(securityProperties.getSecret()))
                         .build()
-                        .verify(token.replace("Bearer ", ""))
-                        .getSubject();
+                        .verify(token.replace("Bearer ", ""));
             }
             catch(JWTVerificationException ex)
             {
                 return null;
             }
 
+            user = verify.getSubject();
+            roles = getRoles(verify);
+
             if(user != null)
             {
-                return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>(0));
+                return new UsernamePasswordAuthenticationToken(user, null, rolesMapper.toGrantedAuthority(roles));
             }
         }
 
         return null;
+    }
+
+    /**
+     * Returns the roles from the given {@link DecodedJWT}
+     * @param decodedToken The JWT token containing the claims
+     *                     for the user being authorized
+     * @return The roles that the user has
+     */
+    protected List<String> getRoles(DecodedJWT decodedToken) {
+        return decodedToken.getClaim("roles").asList(String.class);
     }
 }

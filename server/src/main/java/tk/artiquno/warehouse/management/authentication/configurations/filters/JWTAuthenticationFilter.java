@@ -13,18 +13,22 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import tk.artiquno.warehouse.management.authentication.User;
 import tk.artiquno.warehouse.management.authentication.configurations.SecurityProperties;
+import tk.artiquno.warehouse.management.authentication.mappers.StringToGrantedAuthorityMapper;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Instant;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     @Autowired
     private SecurityProperties securityProperties;
+
+    @Autowired
+    private StringToGrantedAuthorityMapper roleMapper;
 
     public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);
@@ -47,7 +51,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 new UsernamePasswordAuthenticationToken(
                         credentials.getUsername(),
                         credentials.getPassword(),
-                        new ArrayList<>()
+                        Collections.emptyList()
                 )
         );
     }
@@ -59,6 +63,10 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             Authentication auth) {
         String token = JWT.create()
                 .withSubject(((org.springframework.security.core.userdetails.User)auth.getPrincipal()).getUsername())
+                .withArrayClaim("roles",
+                        roleMapper.toString(auth.getAuthorities())
+                                .toArray(new String[0])
+                )
                 .withExpiresAt(
                         Date.from(Instant.now().plus(securityProperties.getDuration())))
                 .sign(Algorithm.HMAC512(securityProperties.getSecret()));

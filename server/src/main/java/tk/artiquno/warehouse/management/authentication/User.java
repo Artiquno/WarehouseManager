@@ -2,10 +2,7 @@ package tk.artiquno.warehouse.management.authentication;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.List;
 
 @Data
@@ -18,5 +15,8 @@ public class User {
     private String username;
     private String password;
 
-//    private List<String> roles;
+    @ElementCollection
+    @CollectionTable(name="roles", joinColumns = @JoinColumn(name="user_id"))
+    @Column(name = "role")
+    private List<String> roles;
 }

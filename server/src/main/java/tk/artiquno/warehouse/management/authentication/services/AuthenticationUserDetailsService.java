@@ -5,18 +5,22 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.artiquno.warehouse.management.authentication.User;
-
-import java.util.Collections;
+import tk.artiquno.warehouse.management.authentication.mappers.StringToGrantedAuthorityMapper;
 
 @Service
 public class AuthenticationUserDetailsService implements UserDetailsService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private StringToGrantedAuthorityMapper rolesMapper;
+
+    @Transactional(readOnly = true)
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userService.getUserByUsername(username);
+        final User user = userService.getUserByUsername(username);
         if(user == null)
         {
             throw new UsernameNotFoundException("The given username does not exist");
@@ -25,6 +29,6 @@ public class AuthenticationUserDetailsService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
-                Collections.emptyList());
+                rolesMapper.toGrantedAuthority(user.getRoles()));
     }
 }
