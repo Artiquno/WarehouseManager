@@ -18,7 +18,6 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,7 +60,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String token = JWT.create()
                 .withSubject(((org.springframework.security.core.userdetails.User)auth.getPrincipal()).getUsername())
                 .withExpiresAt(
-                        Date.from(Instant.now().plus(Duration.ofDays(securityProperties.getDaysToExpire()))))
+                        Date.from(Instant.now().plus(securityProperties.getDuration())))
                 .sign(Algorithm.HMAC512(securityProperties.getSecret()));
         response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
     }

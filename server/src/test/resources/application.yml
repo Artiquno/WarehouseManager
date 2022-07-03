@@ -1,0 +1,17 @@
+spring.datasource:
+  # TODO: Figure out how to use H2 instead of the regular db driver
+  url: "jdbc:mariadb://localhost:3306/warehouse_manager_test"
+  username: ""
+  password: ""
+  # Change the driver name to whatever Connector uses
+  driver-class-name: "org.mariadb.jdbc.Driver"
+
+
+spring.jpa.hibernate.ddl-auto: "create-drop"
+
+authentication:
+  secret: "youcansettheseasenvironmentvariablesyouknow"
+  # See https://docs.oracle.com/javase/8/docs/api/java/time/Duration.html#parse-java.lang.CharSequence-
+  # for info on the duration format
+  duration: "10m"
+
