@@ -10,14 +10,12 @@ import tk.artiquno.warehouse.management.exceptions.StatusCodeException;
 
 import javax.persistence.EntityNotFoundException;
 
+/**
+ * A "configuration" class holding exception handlers so Spring can respond
+ * with the right HTTP code and a reason
+ */
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(RuntimeException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public @ResponseBody ErrorResponse handleException(RuntimeException ex) {
-        return new ErrorResponse(ex.getMessage());
-    }
-
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public @ResponseBody ErrorResponse handleException(EntityNotFoundException ex) {
