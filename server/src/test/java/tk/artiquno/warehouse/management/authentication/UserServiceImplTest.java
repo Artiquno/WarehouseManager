@@ -7,6 +7,7 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import tk.artiquno.warehouse.management.authentication.dto.CreateUserDTO;
+import tk.artiquno.warehouse.management.authentication.services.UserServiceImpl;
 
 import java.util.Optional;
 

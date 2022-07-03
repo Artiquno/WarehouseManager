@@ -1,8 +1,11 @@
-package tk.artiquno.warehouse.management.authentication;
+package tk.artiquno.warehouse.management.authentication.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import tk.artiquno.warehouse.management.authentication.User;
+import tk.artiquno.warehouse.management.authentication.UserRepo;
+import tk.artiquno.warehouse.management.authentication.UsernameExistsException;
 import tk.artiquno.warehouse.management.authentication.dto.CreateUserDTO;
 
 import javax.persistence.EntityNotFoundException;
@@ -17,7 +20,7 @@ public class UserServiceImpl implements UserService {
     private BCryptPasswordEncoder passwordEncoder;
 
     @Override
-    public User getUser(String username) {
+    public User getUserByUsername(String username) {
         return userRepo.findByUsername(username)
                 .orElseThrow(EntityNotFoundException::new);
     }

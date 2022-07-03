@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tk.artiquno.warehouse.management.authentication.dto.CreateUserDTO;
+import tk.artiquno.warehouse.management.authentication.services.UserService;
 
 @RestController
 @RequestMapping("/users")
@@ -15,7 +16,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity createUser(@RequestBody CreateUserDTO userInfo) {
+    public ResponseEntity<Object> createUser(@RequestBody CreateUserDTO userInfo) {
         userService.createUser(userInfo);
         return ResponseEntity.ok().build();
     }
