@@ -3,8 +3,6 @@ package tk.artiquno.warehouse.management.authentication.configurations.filters;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.net.httpserver.Headers;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,27 +11,25 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.header.Header;
 import tk.artiquno.warehouse.management.authentication.User;
+import tk.artiquno.warehouse.management.authentication.configurations.SecurityProperties;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.Date;
 
-@RequiredArgsConstructor
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-    // TODO: Make these configurable
-    public static final String JWT_SECRET = "soverysecret";
-    private static final int DAYS_TO_EXPIRE = 10;
+    @Autowired
+    private SecurityProperties securityProperties;
 
-    private final AuthenticationManager authenticationManager;
+    public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
+        super(authenticationManager);
+    }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
@@ -48,7 +44,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             throw new BadCredentialsException("Could not read credentials", ex);
         }
 
-        return authenticationManager.authenticate(
+        return getAuthenticationManager().authenticate(
                 new UsernamePasswordAuthenticationToken(
                         credentials.getUsername(),
                         credentials.getPassword(),
@@ -65,8 +61,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String token = JWT.create()
                 .withSubject(((org.springframework.security.core.userdetails.User)auth.getPrincipal()).getUsername())
                 .withExpiresAt(
-                        Date.from(Instant.now().plus(Duration.ofDays(DAYS_TO_EXPIRE))))
-                .sign(Algorithm.HMAC512(JWT_SECRET.getBytes()));
+                        Date.from(Instant.now().plus(Duration.ofDays(securityProperties.getDaysToExpire()))))
+                .sign(Algorithm.HMAC512(securityProperties.getSecret()));
         response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
     }
 }

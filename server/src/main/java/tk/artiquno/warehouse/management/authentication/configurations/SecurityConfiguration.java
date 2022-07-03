@@ -1,6 +1,7 @@
 package tk.artiquno.warehouse.management.authentication.configurations;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,6 +22,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
+@ConfigurationPropertiesScan({"tk.artiquno.warehouse.management.authentication.configurations"})
 public class SecurityConfiguration {
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -44,13 +46,23 @@ public class SecurityConfiguration {
     }
 
     @Bean
+    public JWTAuthenticationFilter jwtAuthenticationFilter() {
+        return new JWTAuthenticationFilter(authenticationManager());
+    }
+
+    @Bean
+    public JWTAuthorizationFilter jwtAuthorizationFilter() {
+        return new JWTAuthorizationFilter(authenticationManager());
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilter(new JWTAuthenticationFilter(authenticationManager()))
-                .addFilter(new JWTAuthorizationFilter(authenticationManager()))
+                .addFilter(jwtAuthenticationFilter())
+                .addFilter(jwtAuthorizationFilter())
                 .httpBasic(withDefaults())
                 .csrf().disable();
         return http.build();
