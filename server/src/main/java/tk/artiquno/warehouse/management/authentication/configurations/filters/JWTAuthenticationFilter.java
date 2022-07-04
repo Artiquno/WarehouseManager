@@ -7,12 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import tk.artiquno.warehouse.management.authentication.User;
 import tk.artiquno.warehouse.management.authentication.configurations.SecurityProperties;
+import tk.artiquno.warehouse.management.authentication.dto.SuccessfulAuthenticationDTO;
 import tk.artiquno.warehouse.management.authentication.mappers.StringToGrantedAuthorityMapper;
 
 import javax.servlet.FilterChain;
@@ -22,6 +24,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     @Autowired
@@ -61,15 +64,26 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             HttpServletResponse response,
                                             FilterChain chain,
                                             Authentication auth) {
+        final String username = ((org.springframework.security.core.userdetails.User)auth.getPrincipal()).getUsername();
+        final List<String> roles = roleMapper.toString(auth.getAuthorities());
+
+
         String token = JWT.create()
-                .withSubject(((org.springframework.security.core.userdetails.User)auth.getPrincipal()).getUsername())
-                .withArrayClaim("roles",
-                        roleMapper.toString(auth.getAuthorities())
-                                .toArray(new String[0])
-                )
+                .withSubject(username)
+                .withArrayClaim("roles", roles.toArray(new String[0]))
                 .withExpiresAt(
                         Date.from(Instant.now().plus(securityProperties.getDuration())))
                 .sign(Algorithm.HMAC512(securityProperties.getSecret()));
         response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+
+        SuccessfulAuthenticationDTO authResponse = new SuccessfulAuthenticationDTO();
+        authResponse.setUsername(username);
+        authResponse.setRoles(roles);
+
+        try {
+            new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+        } catch (IOException ex) {
+            throw new InternalAuthenticationServiceException("Could not write to output stream", ex);
+        }
     }
 }
