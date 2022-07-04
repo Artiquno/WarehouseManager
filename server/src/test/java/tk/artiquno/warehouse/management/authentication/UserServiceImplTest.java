@@ -65,8 +65,6 @@ class UserServiceImplTest {
         Mockito.when(userRepo.findByUsername(EXISTING_USERNAME))
                 .thenReturn(Optional.of(badUser));
 
-        encoder.encode(PLAIN_PASSWORD);
-
         assertThrows(UsernameExistsException.class, () -> {
             CreateUserDTO badInfo = new CreateUserDTO();
             badInfo.setUsername(EXISTING_USERNAME);
