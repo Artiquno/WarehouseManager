@@ -28,7 +28,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private SecurityProperties securityProperties;
 
     @Autowired
-    private StringToGrantedAuthorityMapper roleMapper;
+    private StringToGrantedAuthorityMapper rolesMapper;
 
     public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);
@@ -62,7 +62,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             FilterChain chain,
                                             Authentication auth) {
         final String username = ((org.springframework.security.core.userdetails.User)auth.getPrincipal()).getUsername();
-        final List<String> roles = roleMapper.toString(auth.getAuthorities());
+        final List<String> roles = rolesMapper.toString(auth.getAuthorities());
 
 
         String token = JWTUtils.createToken(username, roles, securityProperties);
