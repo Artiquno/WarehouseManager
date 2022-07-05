@@ -1,0 +1,35 @@
+openapi: 3.0.1
+info:
+  title: Warehouse Management
+  description: Management of Warehouse
+  version: 0.0.1-SNAPSHOT
+servers:
+  - url: /v2
+paths:
+  /trucks:
+    get:
+      summary: Get all trucks
+      operationId: getAllTrucks
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Truck'
+components:
+  schemas:
+    Truck:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        chassis:
+          type: integer
+          format: int32
+        licensePlate:
+          type: string
+          example: "IH8SMR"

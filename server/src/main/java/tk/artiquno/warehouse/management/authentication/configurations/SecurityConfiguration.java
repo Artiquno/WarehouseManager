@@ -64,10 +64,15 @@ public class SecurityConfiguration {
         http.authorizeHttpRequests((authorize) -> authorize
                         // Allow anyone to create a default user
                         .antMatchers(HttpMethod.POST, "/users/create-default").permitAll()
+                        // Allow anyone to view the docs
+                        .antMatchers("/swagger-ui/*",
+                                "/swagger-ui.html",
+                                "/v3/api-docs",
+                                "/v3/api-docs/*").permitAll()
                         .anyRequest().authenticated())
                 .addFilter(jwtAuthenticationFilter())
                 .addFilter(jwtAuthorizationFilter())
-                .httpBasic(withDefaults())
+                // .httpBasic(withDefaults())
                 .csrf().disable();
         return http.build();
     }
