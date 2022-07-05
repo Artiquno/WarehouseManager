@@ -2,26 +2,48 @@ package tk.artiquno.warehouse.management.authentication;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import tk.artiquno.warehouse.management.authentication.dto.CreateUserDTO;
 import tk.artiquno.warehouse.management.authentication.services.UserService;
+import tk.artiquno.warehouse.management.swagger.controllers.UsersApi;
+import tk.artiquno.warehouse.management.swagger.dto.UserCredentialsDTO;
+import tk.artiquno.warehouse.management.swagger.dto.UserDTO;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("/users")
-public class UserController {
+public class UserController implements UsersApi {
     @Autowired
     private UserService userService;
 
-    @PostMapping
-    public ResponseEntity<Object> createUser(@RequestBody CreateUserDTO userInfo) {
-        userService.createUser(userInfo);
+    @Override
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @Override
+    public ResponseEntity<UserDTO> getUserById(Long id) {
+        return ResponseEntity.ok(userService.getUserById(id));
+    }
+
+    @Override
+    public ResponseEntity<UserDTO> createUser(UserCredentialsDTO userCredentials) {
+        UserDTO createdUser = userService.createUser(userCredentials);
+        return ResponseEntity.ok(createdUser);
+    }
+
+    @Override
+    public ResponseEntity<UserDTO> updateUser(UserDTO userDTO) {
+        UserDTO user = userService.updateUser(userDTO);
+        return ResponseEntity.ok(user);
+    }
+
+    @Override
+    public ResponseEntity<Void> removeUser(Long id) {
+        userService.removeUser(id);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/create-default")
+    @Override
     public ResponseEntity<String> createDefaultUser() {
         userService.createDefaultUser();
         return ResponseEntity.ok("Default user created. Try not to delete this one...");

@@ -3,11 +3,13 @@ package tk.artiquno.warehouse.management.authentication;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import tk.artiquno.warehouse.management.authentication.dto.CreateUserDTO;
+import tk.artiquno.warehouse.management.authentication.mappers.UserCredentialsMapper;
 import tk.artiquno.warehouse.management.authentication.services.UserServiceImpl;
+import tk.artiquno.warehouse.management.swagger.dto.UserCredentialsDTO;
 
 import java.util.Optional;
 
@@ -28,6 +30,9 @@ class UserServiceImplTest {
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
     private String encryptedPassword;
 
+    @Spy
+    private UserCredentialsMapper userCredentialsMapper = Mappers.getMapper(UserCredentialsMapper.class);
+
     @InjectMocks
     private UserServiceImpl userService;
 
@@ -43,7 +48,7 @@ class UserServiceImplTest {
 
         final ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
 
-        CreateUserDTO userInfo = new CreateUserDTO();
+        UserCredentialsDTO userInfo = new UserCredentialsDTO();
         userInfo.setUsername(NEW_USERNAME);
         userInfo.setPassword(PLAIN_PASSWORD);
 
@@ -66,7 +71,7 @@ class UserServiceImplTest {
                 .thenReturn(Optional.of(badUser));
 
         assertThrows(UsernameExistsException.class, () -> {
-            CreateUserDTO badInfo = new CreateUserDTO();
+            UserCredentialsDTO badInfo = new UserCredentialsDTO();
             badInfo.setUsername(EXISTING_USERNAME);
             userService.createUser(badInfo);
         });

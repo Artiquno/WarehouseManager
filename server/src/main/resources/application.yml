@@ -17,6 +17,7 @@ authentication:
     # Credentials for the default user
     username: ""
     password: ""
+    email: ""
     roles:
       - "SYSTEM_ADMIN"
 

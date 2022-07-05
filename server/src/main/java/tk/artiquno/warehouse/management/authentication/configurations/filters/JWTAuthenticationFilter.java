@@ -13,8 +13,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import tk.artiquno.warehouse.management.authentication.JWTUtils;
 import tk.artiquno.warehouse.management.authentication.User;
 import tk.artiquno.warehouse.management.authentication.configurations.SecurityProperties;
-import tk.artiquno.warehouse.management.authentication.dto.SuccessfulAuthenticationDTO;
 import tk.artiquno.warehouse.management.authentication.mappers.StringToGrantedAuthorityMapper;
+import tk.artiquno.warehouse.management.swagger.dto.UserDTO;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
@@ -62,18 +62,19 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             FilterChain chain,
                                             Authentication auth) {
         final String username = ((org.springframework.security.core.userdetails.User)auth.getPrincipal()).getUsername();
+
         final List<String> roles = rolesMapper.toString(auth.getAuthorities());
 
 
         String token = JWTUtils.createToken(username, roles, securityProperties);
         response.addHeader(HttpHeaders.AUTHORIZATION, token);
 
-        SuccessfulAuthenticationDTO authResponse = new SuccessfulAuthenticationDTO();
-        authResponse.setUsername(username);
-        authResponse.setRoles(roles);
+        UserDTO user = new UserDTO();
+        user.setUsername(username);
+        user.setRoles(roles);
 
         try {
-            new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+            new ObjectMapper().writeValue(response.getOutputStream(), user);
         } catch (IOException ex) {
             throw new InternalAuthenticationServiceException("Could not write to output stream", ex);
         }

@@ -19,8 +19,6 @@ import tk.artiquno.warehouse.management.authentication.configurations.filters.JW
 import tk.artiquno.warehouse.management.authentication.configurations.filters.JWTAuthorizationFilter;
 import tk.artiquno.warehouse.management.authentication.services.AuthenticationUserDetailsService;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
@@ -62,6 +60,10 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((authorize) -> authorize
+                        // Since we're using Swagger to generate out APIs we can't
+                        // use annotations for authorization...
+                        .antMatchers("/users").hasRole("SYSTEM_ADMIN")
+                        .antMatchers("/users/reset-password").authenticated()
                         // Allow anyone to create a default user
                         .antMatchers(HttpMethod.POST, "/users/create-default").permitAll()
                         // Allow anyone to view the docs
@@ -72,7 +74,6 @@ public class SecurityConfiguration {
                         .anyRequest().authenticated())
                 .addFilter(jwtAuthenticationFilter())
                 .addFilter(jwtAuthorizationFilter())
-                // .httpBasic(withDefaults())
                 .csrf().disable();
         return http.build();
     }
