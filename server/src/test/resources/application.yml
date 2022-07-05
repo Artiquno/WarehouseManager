@@ -18,6 +18,6 @@ authentication:
     username: "bob"
     password: "bobspassword"
     roles:
-      - "SYSTEM_ADMIN"
-      - "WAREHOUSE_MANAGER"
+      - "ROLE_SYSTEM_ADMIN"
+      - "ROLE_WAREHOUSE_MANAGER"
 
