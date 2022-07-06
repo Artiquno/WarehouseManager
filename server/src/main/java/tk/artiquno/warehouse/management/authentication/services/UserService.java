@@ -1,5 +1,6 @@
 package tk.artiquno.warehouse.management.authentication.services;
 
+import org.springframework.data.domain.Pageable;
 import tk.artiquno.warehouse.management.authentication.User;
 import tk.artiquno.warehouse.management.swagger.dto.UserCredentialsDTO;
 import tk.artiquno.warehouse.management.swagger.dto.UserDTO;
@@ -7,8 +8,7 @@ import tk.artiquno.warehouse.management.swagger.dto.UserDTO;
 import java.util.List;
 
 public interface UserService {
-    // TODO: Add filters and pagination
-    List<UserDTO> getAllUsers();
+    List<UserDTO> getAllUsers(Pageable pageable);
 
     /**
      * Finds the user with the given id. If can't find it

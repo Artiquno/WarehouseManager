@@ -1,6 +1,7 @@
 package tk.artiquno.warehouse.management.authentication;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import tk.artiquno.warehouse.management.authentication.services.UserService;
@@ -16,8 +17,8 @@ public class UserController implements UsersApi {
     private UserService userService;
 
     @Override
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<List<UserDTO>> getAllUsers(Pageable pageable) {
+        return ResponseEntity.ok(userService.getAllUsers(pageable));
     }
 
     @Override

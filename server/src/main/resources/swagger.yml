@@ -13,6 +13,8 @@ paths:
     get:
       summary: Get all users
       operationId: getAllUsers
+      parameters:
+        - $ref: '#/components/parameters/Pagination'
       responses:
         200:
           description: Successful operation
@@ -178,3 +180,23 @@ components:
       properties:
         message:
           type: string
+
+    Pageable:
+      description: Pagination parameters
+      type: object
+      properties:
+        page:
+          type: integer
+        size:
+          type: integer
+        sort:
+          type: string
+          description: The column to sort by
+
+  parameters:
+    Pagination:
+      in: query
+      name: pagination
+      required: false
+      schema:
+        $ref: '#/components/schemas/Pageable'
