@@ -3,22 +3,27 @@ package tk.artiquno.warehouse.management.entities;
 import lombok.Data;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
+import java.util.List;
 
-@Entity(name = "trucks")
 @Data
-public class Truck {
+@Entity(name = "orders")
+public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @NotNull
-    // @Length(min = 17, max = 17)
     @Column(nullable = false)
-    private String chassis;
+    private Date submittedDate;
     @NotNull
-    @NotEmpty
     @Column(nullable = false)
-    private String licensePlate;
+    private Date deadlineDate;
+    @NotNull
+    @Column(nullable = false)
+    private OrderStatus status;
+
+    @OneToMany
+    private List<OrderedItem> items;
 }

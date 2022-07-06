@@ -23,7 +23,7 @@ class WarehouseManagementApplicationTests {
 	public void addDataToDb() {
 		testingTruck = new Truck();
 		testingTruck.setLicensePlate("THANSR");
-		testingTruck.setChassis(42);
+		testingTruck.setChassis("5GZCZ43D13S812715");
 		trucksRepo.save(testingTruck);
 	}
 

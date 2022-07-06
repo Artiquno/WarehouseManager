@@ -136,8 +136,8 @@ components:
           type: integer
           format: int64
         chassis:
-          type: integer
-          format: int64
+          type: string
+          example: "5GZCZ43D13S812715"
         licensePlate:
           type: string
           example: "IH8SMR"

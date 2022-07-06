@@ -13,7 +13,7 @@ public class TrucksController implements TrucksApi {
     @Override
     public ResponseEntity<List<TruckDTO>> getAllTrucks() {
         TruckDTO truck = new TruckDTO()
-                .chassis(42)
+                .chassis("5GZCZ43D13S812715")
                 .licensePlate("6NRLKN8");
 
         return ResponseEntity.ok(Collections.singletonList(truck));
