@@ -8,6 +8,7 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import tk.artiquno.warehouse.management.authentication.mappers.UserCredentialsMapper;
+import tk.artiquno.warehouse.management.authentication.mappers.UserMapper;
 import tk.artiquno.warehouse.management.authentication.services.UserServiceImpl;
 import tk.artiquno.warehouse.management.swagger.dto.UserCredentialsDTO;
 
@@ -32,6 +33,9 @@ class UserServiceImplTest {
 
     @Spy
     private UserCredentialsMapper userCredentialsMapper = Mappers.getMapper(UserCredentialsMapper.class);
+
+    @Spy
+    private UserMapper userMapper = Mappers.getMapper(UserMapper.class);
 
     @InjectMocks
     private UserServiceImpl userService;
