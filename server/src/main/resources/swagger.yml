@@ -6,6 +6,10 @@ info:
 servers:
   - url: /v2
 paths:
+  ##################
+  # Users
+  ##################
+
   /users:
     summary: API for user management
     description: >
@@ -36,7 +40,7 @@ paths:
               $ref: '#/components/schemas/UserCredentialsDTO'
       responses:
         200:
-          description: Great success!
+          description: Great success! The created user is returned
           content:
             application/json:
               schema:
@@ -53,7 +57,7 @@ paths:
               $ref: '#/components/schemas/UserDTO'
       responses:
         200:
-          description: User was updated successfully
+          description: User was updated successfully. The updated user will be returned
           content:
             application/json:
               schema:
@@ -94,7 +98,7 @@ paths:
             type: integer
             format: int64
       responses:
-        200:
+        204:
           description: The user was deleted. Or it didn't exist in the first place
 
   /users/create-default:
@@ -116,10 +120,232 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  ##################
+  # Orders
+  ##################
+
+  /orders:
+    get:
+      summary: Show all orders available for the authenticated user
+      operationId: getAllOrders
+      parameters:
+        - name: status
+          description: Only show orders with this status
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/OrderStatus'
+        - $ref: '#/components/parameters/Pagination'
+      responses:
+        200:
+          description: Call was successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BasicOrderDTO'
+    post:
+      summary: Create an order and set its status to CREATED
+      operationId: createOrder
+      requestBody:
+        description: The order information to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderDTO'
+      responses:
+        200:
+          description: Success was achieved. The created order is returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDTO'
+    put:
+      summary: Update a CREATED/DECLINED order
+      operationId: updateOrder
+      responses:
+        200:
+          description: Goal was finished successfully. The updated order is returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDTO'
+
+  /orders/schedule-delivery:
+    post:
+      summary: Schedule delivery for all the approved orders
+      operationId: scheduleDelivery
+      requestBody:
+        description: Delivery information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeliveryDTO'
+      responses:
+        204:
+          description: Delivery was successfully scheduled
+
+  /orders/{id}:
+    get:
+      summary: Retrieve an order with the given id
+      operationId: getOrder
+      parameters:
+        - name: id
+          in: path
+          description: The id of the order to look for
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: The search for the order was successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDTO'
+        404:
+          description: Order with this id doesn't exist
+    delete:
+      summary: Delete an order
+      operationId: deleteOrder
+      parameters:
+        - name: id
+          in: path
+          description: The id of the order to be deleted
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        204:
+          description: Order was deleted successfully
+
+  /orders/{id}/submit:
+    put:
+      summary: Submit an order
+      operationId: submitOrder
+      parameters:
+        - name: id
+          in: path
+          description: The id of the order to be submitted
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: The order has been submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDTO'
+        404:
+          description: Order with this id doesn't exist
+        409:
+          description: The order is not in a state to be submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /orders/{id}/approve:
+    put:
+      summary: Approve a submitted order
+      operationId: approveOrder
+      parameters:
+        - name: id
+          in: path
+          description: The id of the order to be approved
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: The order has received the manager's seal of approval
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDTO'
+        404:
+          description: Order with this id doesn't exist
+        409:
+          description: The order could not be approved, probably because it's not in an AWAITING_APPROVAL state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /orders/{id}/decline:
+    put:
+      summary: Decline a submitted order
+      operationId: declineOrder
+      parameters:
+        - name: id
+          in: path
+          description: The id of the order to be declined
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: The order was declined
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDTO'
+        404:
+          description: Order with this id doesn't exist
+        409:
+          description: The order could not be declined, probably because it's not in an AWAITING_APPROVAL state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /orders/{id}/cancel:
+    put:
+      summary: Cancel an order
+      operationId: cancelOrder
+      parameters:
+        - name: id
+          in: path
+          description: The id of the order to be cancelled
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: The order has been cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDTO'
+        404:
+          description: Order with this id doesn't exist
+        409:
+          description: The order could not be cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  ##################
+  # Trucks
+  ##################
+
   /trucks:
     get:
       summary: Get all trucks
       operationId: getAllTrucks
+      parameters:
+        - $ref: '#/components/parameters/Pagination'
       responses:
         200:
           description: Success
@@ -129,8 +355,174 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/TruckDTO'
+    post:
+      summary: Create a truck out of thin air
+      operationId: createTruck
+      requestBody:
+        description: Truck information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TruckDTO'
+      responses:
+        200:
+          description: Truck was created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TruckDTO'
+    put:
+      summary: Update a truck's information
+      operationId: updateTruck
+      requestBody:
+        description: Truck information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TruckDTO'
+      responses:
+        200:
+          description: Truck was updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TruckDTO'
+
+  /trucks/{id}:
+    get:
+      summary: Get a truck's information
+      operationId: getTruck
+      parameters:
+        - name: id
+          in: path
+          description: The id of the truck
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TruckDTO'
+        404:
+          description: Truck with given id could not be found
+    delete:
+      summary: Burn a truck (in an eco-friendly manner)
+      operationId: deleteTruck
+      parameters:
+        - name: id
+          in: path
+          description: The id of the truck
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        204:
+          description: Truck was sent back to meet its maker
+
+  ##################
+  # Items
+  ##################
+
+  /items:
+    get:
+      summary: Get all the items in the inventory
+      operationId: getAllItems
+      parameters:
+        - $ref: '#/components/parameters/Pagination'
+      responses:
+        200:
+          description: Have a look at what we have in stock!
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ItemDTO'
+    post:
+      summary: Add item to inventory
+      operationId: createItem
+      requestBody:
+        description: Item information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ItemDTO'
+      responses:
+        200:
+          description: Item was created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemDTO'
+    put:
+      summary: Update an item
+      operationId: updateItem
+      requestBody:
+        description: Item information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ItemDTO'
+      responses:
+        200:
+          description: Item was updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemDTO'
+        404:
+          description: Item could not be found
+
+  /items/{id}:
+    get:
+      summary: Get item details
+      operationId: getItem
+      parameters:
+        - name: id
+          in: path
+          description: The item's id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: It is done
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemDTO'
+        404:
+          description: Item could not be found
+    delete:
+      summary: Delete an item
+      operationId: deleteItem
+      parameters:
+        - name: id
+          in: path
+          description: The item's id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        204:
+          description: Item was deleted successfully
+
 components:
   schemas:
+    ###################
+    # Entities
+    ###################
     TruckDTO:
       type: object
       properties:
@@ -144,6 +536,78 @@ components:
           type: string
           example: "IH8SMR"
 
+    OrderDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        submittedDate:
+          type: string
+          format: date-time
+        deadlineDate:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/OrderStatus'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderedItemDTO'
+    BasicOrderDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        submittedDate:
+          type: string
+          format: date-time
+        deadlineDate:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/OrderStatus'
+
+    DeliveryDTO:
+      type: object
+      properties:
+        deliveryDate:
+          type: string
+          format: date
+        trucks:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          description: The ids of the trucks that will be delivering orders
+          items:
+            type: integer
+            format: long
+
+    ItemDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        quantityInStock:
+          type: integer
+        unitPrice:
+          type: number
+
+    OrderedItemDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        item:
+          $ref: '#/components/schemas/ItemDTO'
+        requestedQuantity:
+          type: integer
+
     UserDTO:
       type: object
       properties:
@@ -154,6 +618,7 @@ components:
           type: string
         email:
           type: string
+          format: email
         roles:
           type: array
           items:
@@ -168,12 +633,29 @@ components:
           type: string
         password:
           type: string
+          format: password
         email:
           type: string
+          format: email
         roles:
           type: array
           items:
             type: string
+
+    ##################
+    # Other schemas
+    ##################
+
+    OrderStatus:
+      type: string
+      enum:
+        - CREATED
+        - AWAITING_APPROVAL
+        - APPROVED
+        - DECLINED
+        - UNDER_DELIVERY
+        - FULFILLED
+        - CANCELLED
 
     ErrorResponse:
       type: object

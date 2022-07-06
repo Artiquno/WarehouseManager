@@ -1,17 +1,16 @@
 package tk.artiquno.warehouse.management.controllers;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
 import tk.artiquno.warehouse.management.swagger.controllers.TrucksApi;
 import tk.artiquno.warehouse.management.swagger.dto.TruckDTO;
 
 import java.util.Collections;
 import java.util.List;
 
-@RestController
 public class TrucksController implements TrucksApi {
     @Override
-    public ResponseEntity<List<TruckDTO>> getAllTrucks() {
+    public ResponseEntity<List<TruckDTO>> getAllTrucks(Pageable pageable) {
         TruckDTO truck = new TruckDTO()
                 .chassis("5GZCZ43D13S812715")
                 .licensePlate("6NRLKN8");

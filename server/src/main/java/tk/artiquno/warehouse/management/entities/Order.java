@@ -1,6 +1,7 @@
 package tk.artiquno.warehouse.management.entities;
 
 import lombok.Data;
+import tk.artiquno.warehouse.management.swagger.dto.OrderStatus;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
