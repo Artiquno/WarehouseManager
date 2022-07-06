@@ -52,8 +52,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserByUsername(String username) {
-        return userRepo.findByUsername(username)
+    public User getActiveUserByUsername(String username) {
+        return userRepo.findByUsernameAndIsActive(username, true)
                 .orElseThrow(EntityNotFoundException::new);
     }
 
@@ -74,7 +74,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public List<String> getRolesByUsername(String username) {
-        User user = getUserByUsername(username);
+        User user = getActiveUserByUsername(username);
         // The bad .stream().toList() is needed since we have lazy loading
         // and we *have* to load the roles before we exit the method otherwise
         // we will get LazyInitializationException (because then the

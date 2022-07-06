@@ -20,7 +20,7 @@ public class AuthenticationUserDetailsService implements UserDetailsService {
     @Transactional(readOnly = true)
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        final User user = userService.getUserByUsername(username);
+        final User user = userService.getActiveUserByUsername(username);
         if(user == null)
         {
             throw new UsernameNotFoundException("The given username does not exist");

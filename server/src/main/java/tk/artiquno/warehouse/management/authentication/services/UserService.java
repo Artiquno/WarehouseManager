@@ -11,7 +11,7 @@ public interface UserService {
     List<UserDTO> getAllUsers(Pageable pageable);
 
     /**
-     * Finds the user with the given id. If can't find it
+     * Finds the user with the given id. If we can't find it,
      * it throws an exception
      * @param id The id to search for
      * @return The user
@@ -22,14 +22,15 @@ public interface UserService {
     UserDTO getUserById(long id);
 
     /**
-     * Finds the user with the given username
+     * Finds the user with the given username. If the user is not active
+     * it is considered not found
      * @param username The username to look for
      * @return The user
      *
      * @throws javax.persistence.EntityNotFoundException if a user with the
      * given username can not be found
      */
-    User getUserByUsername(String username);
+    User getActiveUserByUsername(String username);
 
     /**
      * Creates a user with the given credentials
