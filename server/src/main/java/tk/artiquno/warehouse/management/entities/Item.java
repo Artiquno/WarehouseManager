@@ -3,6 +3,7 @@ package tk.artiquno.warehouse.management.entities;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -18,7 +19,10 @@ public class Item {
     @NotEmpty
     @Column(nullable = false)
     private String name;
+
+    @Min(0)
     private int quantityInStock;
+
     private float unitPrice;
 
     @OneToMany(mappedBy = "item")

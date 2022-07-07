@@ -56,6 +56,11 @@ public class OrdersServiceImpl implements OrdersService {
     }
 
     @Override
+    public List<Order> findAllOrdersForDelivery() {
+        return ordersRepo.findAllByStatus(OrderStatus.APPROVED);
+    }
+
+    @Override
     public Page<BasicOrderDTO> findAllOrdersWithStatus(Pageable pagination, OrderStatus status) {
         final FullUserDetails userDetails = getAuthenticatedUser();
 

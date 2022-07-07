@@ -45,12 +45,16 @@ public class ItemsServiceImpl implements ItemsService {
 
     @Override
     public ItemDTO updateItem(ItemDTO item) {
-        if(!itemsRepo.existsById(item.getId()))
-        {
+        Item updated = updateItem(itemsMapper.toItem(item));
+        return itemsMapper.toDto(updated);
+    }
+
+    @Override
+    public Item updateItem(Item item) {
+        if(!itemsRepo.existsById(item.getId())) {
             throw new EntityNotFoundException();
         }
 
-        Item updated = itemsRepo.save(itemsMapper.toItem(item));
-        return itemsMapper.toDto(updated);
+        return itemsRepo.save(item);
     }
 }

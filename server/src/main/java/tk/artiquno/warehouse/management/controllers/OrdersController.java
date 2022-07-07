@@ -5,9 +5,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import tk.artiquno.warehouse.management.services.DeliveriesService;
 import tk.artiquno.warehouse.management.services.OrdersService;
 import tk.artiquno.warehouse.management.swagger.controllers.OrdersApi;
 import tk.artiquno.warehouse.management.swagger.dto.DeliveryDTO;
+import tk.artiquno.warehouse.management.swagger.dto.DeliveryScheduleResponse;
 import tk.artiquno.warehouse.management.swagger.dto.OrderDTO;
 import tk.artiquno.warehouse.management.swagger.dto.OrderStatus;
 
@@ -15,6 +17,9 @@ import tk.artiquno.warehouse.management.swagger.dto.OrderStatus;
 public class OrdersController implements OrdersApi {
     @Autowired
     private OrdersService ordersService;
+
+    @Autowired
+    private DeliveriesService deliveriesService;
 
     @Override
     public ResponseEntity<OrderDTO> createOrder(OrderDTO orderDTO) {
@@ -43,8 +48,8 @@ public class OrdersController implements OrdersApi {
     }
 
     @Override
-    public ResponseEntity<Void> scheduleDelivery(DeliveryDTO deliveryDTO) {
-        return OrdersApi.super.scheduleDelivery(deliveryDTO);
+    public ResponseEntity<DeliveryScheduleResponse> scheduleDelivery(DeliveryDTO deliveryDTO) {
+        return ResponseEntity.ok(deliveriesService.scheduleDelivery(deliveryDTO));
     }
 
     @Override

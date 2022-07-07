@@ -2,6 +2,7 @@ package tk.artiquno.warehouse.management.services;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import tk.artiquno.warehouse.management.entities.Item;
 import tk.artiquno.warehouse.management.swagger.dto.ItemDTO;
 
 public interface ItemsService {
@@ -34,4 +35,6 @@ public interface ItemsService {
      * @throws javax.persistence.EntityNotFoundException if an item with the given id doesn't exist
      */
     ItemDTO updateItem(ItemDTO item);
+
+    Item updateItem(Item item);
 }
