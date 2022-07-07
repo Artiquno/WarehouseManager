@@ -25,9 +25,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserDTO'
+                $ref: '#/components/schemas/Page'
     post:
       summary: Create a user
       operationId: createUser
@@ -352,9 +350,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TruckDTO'
+                $ref: '#/components/schemas/Page'
     post:
       summary: Create a truck out of thin air
       operationId: createTruck
@@ -442,9 +438,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ItemDTO'
+                $ref: '#/components/schemas/Page'
     post:
       summary: Add item to inventory
       operationId: createItem
@@ -674,6 +668,19 @@ components:
         sort:
           type: string
           description: The column to sort by
+    # TODO: Find a way to use a Page<T> instead of a raw Page. Making a custom template may work?
+    Page:
+      description: A page of somethings
+      type: object
+      properties:
+        totalPages:
+          type: integer
+        totalElements:
+          type: integer
+          format: int64
+        content:
+          type: array
+          items: {}
 
   parameters:
     Pagination:

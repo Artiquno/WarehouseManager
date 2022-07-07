@@ -2,6 +2,7 @@ package tk.artiquno.warehouse.management.authentication.services;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,6 @@ import tk.artiquno.warehouse.management.swagger.dto.UserDTO;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -38,10 +38,9 @@ public class UserServiceImpl implements UserService {
     private SecurityProperties securityProperties;
 
     @Override
-    public List<UserDTO> getAllUsers(Pageable pageable) {
-        return StreamSupport.stream(userRepo.findAll(pageable).spliterator(), false)
-                .map(userMapper::toUserDTO)
-                .toList();
+    public Page<UserDTO> getAllUsers(Pageable pageable) {
+        return userRepo.findAll(pageable)
+                .map(userMapper::toUserDTO);
     }
 
     @Override
