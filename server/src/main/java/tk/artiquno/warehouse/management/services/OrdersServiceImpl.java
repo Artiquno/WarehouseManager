@@ -66,6 +66,7 @@ public class OrdersServiceImpl implements OrdersService {
         exampleOrder.setOwner(exampleOwner);
         exampleOrder.setStatus(status);
 
+        // A miracle of technology!
         ExampleMatcher matcher = ExampleMatcher.matching()
                 .withIgnoreNullValues()
                 .withIgnorePaths("id")
@@ -106,6 +107,7 @@ public class OrdersServiceImpl implements OrdersService {
         Order existingOrder = ordersRepo.findByIdAndOwnerId(orderDTO.getId(), userDetails.getId())
                 .orElseThrow(EntityNotFoundException::new);
 
+        // Only allow orders with these statuses to be updated
         final List<OrderStatus> possibleStatuses = Arrays.asList(OrderStatus.CREATED, OrderStatus.DECLINED);
         if(!possibleStatuses.contains(existingOrder.getStatus()))
         {
@@ -121,7 +123,18 @@ public class OrdersServiceImpl implements OrdersService {
 
     @Override
     public OrderDTO updateOrderStatus(Long orderId, OrderStatus newStatus) {
-        Order existingOrder = ordersRepo.findById(orderId)
+        FullUserDetails userDetails = getAuthenticatedUser();
+
+        Optional<Order> existingOrderOptional;
+        if(userDetails.getRoles().contains(Roles.WAREHOUSE_MANAGER.getValue()))
+        {
+            existingOrderOptional = ordersRepo.findById(orderId);
+        }
+        else
+        {
+            existingOrderOptional = ordersRepo.findByIdAndOwnerId(orderId, userDetails.getId());
+        }
+        Order existingOrder = existingOrderOptional
                 .orElseThrow(EntityNotFoundException::new);
 
         // TODO: Replace with a proper state machine
