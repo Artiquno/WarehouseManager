@@ -140,9 +140,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/BasicOrderDTO'
+                $ref: '#/components/schemas/Page'
     post:
       summary: Create an order and set its status to CREATED
       operationId: createOrder
@@ -163,6 +161,13 @@ paths:
     put:
       summary: Update a CREATED/DECLINED order
       operationId: updateOrder
+      requestBody:
+        description: The order information to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderDTO'
       responses:
         200:
           description: Goal was finished successfully. The updated order is returned
@@ -590,13 +595,11 @@ components:
           type: integer
         unitPrice:
           type: number
+          format: float
 
     OrderedItemDTO:
       type: object
       properties:
-        id:
-          type: integer
-          format: int64
         item:
           $ref: '#/components/schemas/ItemDTO'
         requestedQuantity:

@@ -1,11 +1,12 @@
 package tk.artiquno.warehouse.management.entities;
 
 import lombok.Data;
+import tk.artiquno.warehouse.management.authentication.User;
 import tk.artiquno.warehouse.management.swagger.dto.OrderStatus;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
@@ -17,14 +18,18 @@ public class Order {
 
     @NotNull
     @Column(nullable = false)
-    private Date submittedDate;
+    private OffsetDateTime submittedDate;
     @NotNull
     @Column(nullable = false)
-    private Date deadlineDate;
+    private OffsetDateTime deadlineDate;
     @NotNull
     @Column(nullable = false)
     private OrderStatus status;
 
-    @OneToMany
+    @OneToMany(cascade = { CascadeType.ALL })
     private List<OrderedItem> items;
+
+    @NotNull
+    @ManyToOne(optional = false)
+    private User owner;
 }
