@@ -339,6 +339,34 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /orders/{id}/fulfill:
+    put:
+      summary: Mark order as fulfilled
+      operationId: fulfillOrder
+      parameters:
+        - name: id
+          in: path
+          description: The id of the order to be cancelled
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: The order was marked successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDTO'
+        404:
+          description: Order with this id does not exist
+        409:
+          description: The order could not be fulfilled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
   ##################
   # Trucks
   ##################

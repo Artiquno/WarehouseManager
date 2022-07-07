@@ -66,4 +66,9 @@ public class OrdersController implements OrdersApi {
     public ResponseEntity<OrderDTO> submitOrder(Long id) {
         return ResponseEntity.ok(ordersService.updateOrderStatus(id, OrderStatus.AWAITING_APPROVAL));
     }
+
+    @Override
+    public ResponseEntity<OrderDTO> fulfillOrder(Long id) {
+        return ResponseEntity.ok(ordersService.updateOrderStatus(id, OrderStatus.FULFILLED));
+    }
 }

@@ -2,11 +2,14 @@ package tk.artiquno.warehouse.management.services;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import tk.artiquno.warehouse.management.authentication.FullUserDetails;
+import tk.artiquno.warehouse.management.authentication.entities.Roles;
 import tk.artiquno.warehouse.management.authentication.entities.User;
 import tk.artiquno.warehouse.management.entities.Order;
 import tk.artiquno.warehouse.management.exceptions.ConflictException;
@@ -38,7 +41,7 @@ public class OrdersServiceImpl implements OrdersService {
         order.setStatus(OrderStatus.CREATED);
         order.setSubmittedDate(OffsetDateTime.now());
 
-        FullUserDetails principal = (FullUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        FullUserDetails principal = getAuthenticatedUser();
         User owner = new User();
         owner.setId(principal.getId());
         order.setOwner(owner);
@@ -54,21 +57,60 @@ public class OrdersServiceImpl implements OrdersService {
 
     @Override
     public Page<BasicOrderDTO> findAllOrdersWithStatus(Pageable pagination, OrderStatus status) {
-        return ordersRepo.findAllByStatus(pagination, status)
+        final FullUserDetails userDetails = getAuthenticatedUser();
+
+        User exampleOwner = new User();
+        exampleOwner.setId(userDetails.getId());
+
+        Order exampleOrder = new Order();
+        exampleOrder.setOwner(exampleOwner);
+        exampleOrder.setStatus(status);
+
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withIgnoreNullValues()
+                .withIgnorePaths("id")
+                .withMatcher("status", ExampleMatcher.GenericPropertyMatcher::ignoreCase);
+
+        if(userDetails.getRoles().contains(Roles.SYSTEM_ADMIN.getValue()))
+        {
+            // Alternatively you could just leave owner as null
+            matcher = matcher.withIgnorePaths("owner.id");
+        }
+        Example<Order> example = Example.of(exampleOrder, matcher);
+
+        return ordersRepo.findAll(example, pagination)
                 .map(basicOrdersMapper::toDto);
     }
 
     @Override
     public OrderDTO findOrderById(Long id) {
-        return ordersRepo.findById(id)
-                .map(ordersMapper::toDto)
+        final FullUserDetails userDetails = getAuthenticatedUser();
+
+        Optional<Order> order;
+        if(userDetails.getRoles().contains(Roles.WAREHOUSE_MANAGER.getValue()))
+        {
+            order = ordersRepo.findById(id);
+        }
+        else
+        {
+            order = ordersRepo.findByIdAndOwnerId(id, userDetails.getId());
+        }
+        return order.map(ordersMapper::toDto)
                 .orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
     public OrderDTO updateOrder(OrderDTO orderDTO) {
-        Order existingOrder = ordersRepo.findById(orderDTO.getId())
+        final FullUserDetails userDetails = getAuthenticatedUser();
+
+        Order existingOrder = ordersRepo.findByIdAndOwnerId(orderDTO.getId(), userDetails.getId())
                 .orElseThrow(EntityNotFoundException::new);
+
+        final List<OrderStatus> possibleStatuses = Arrays.asList(OrderStatus.CREATED, OrderStatus.DECLINED);
+        if(!possibleStatuses.contains(existingOrder.getStatus()))
+        {
+            throw new ConflictException("You can only update orders with CREATED or DECLINED status");
+        }
 
         Order newOrder = ordersMapper.toOrder(orderDTO);
         BeanUtils.copyProperties(newOrder, existingOrder, "submittedDate", "status", "owner");
@@ -137,14 +179,19 @@ public class OrdersServiceImpl implements OrdersService {
 
         if(!availableTransitions.contains(oldState))
         {
-            StringBuilder message = new StringBuilder(String.format("Can't move order to %s from %s. Order" +
+            StringBuilder message = new StringBuilder(String.format("Can't move order to %s from %s. Order " +
                     "needs to be in one of these states to be set as %s: ", newState, oldState, newState));
             for (OrderStatus status : availableTransitions) {
                 message.append(status.getValue());
+                message.append(", ");
             }
             throw new ConflictException(message.toString());
         }
 
         return true;
+    }
+
+    private FullUserDetails getAuthenticatedUser() {
+        return (FullUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }
