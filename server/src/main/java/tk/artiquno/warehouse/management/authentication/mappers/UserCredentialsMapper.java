@@ -1,7 +1,7 @@
 package tk.artiquno.warehouse.management.authentication.mappers;
 
 import org.mapstruct.Mapper;
-import tk.artiquno.warehouse.management.authentication.User;
+import tk.artiquno.warehouse.management.authentication.entities.User;
 import tk.artiquno.warehouse.management.swagger.dto.UserCredentialsDTO;
 
 import java.util.List;

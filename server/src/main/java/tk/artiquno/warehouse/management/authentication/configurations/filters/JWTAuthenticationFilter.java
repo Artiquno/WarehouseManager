@@ -10,10 +10,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import tk.artiquno.warehouse.management.authentication.FullUserDetails;
 import tk.artiquno.warehouse.management.authentication.JWTUtils;
-import tk.artiquno.warehouse.management.authentication.User;
 import tk.artiquno.warehouse.management.authentication.configurations.SecurityProperties;
-import tk.artiquno.warehouse.management.authentication.mappers.StringToGrantedAuthorityMapper;
+import tk.artiquno.warehouse.management.authentication.entities.User;
+import tk.artiquno.warehouse.management.authentication.mappers.UserDetailsMapper;
 import tk.artiquno.warehouse.management.swagger.dto.UserDTO;
 
 import javax.servlet.FilterChain;
@@ -21,14 +22,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     @Autowired
     private SecurityProperties securityProperties;
 
     @Autowired
-    private StringToGrantedAuthorityMapper rolesMapper;
+    private UserDetailsMapper userDetailsMapper;
 
     public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);
@@ -61,17 +61,12 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             HttpServletResponse response,
                                             FilterChain chain,
                                             Authentication auth) {
-        final String username = ((org.springframework.security.core.userdetails.User)auth.getPrincipal()).getUsername();
+        FullUserDetails userDetails = (FullUserDetails)auth.getPrincipal();
 
-        final List<String> roles = rolesMapper.toString(auth.getAuthorities());
-
-
-        String token = JWTUtils.createToken(username, roles, securityProperties);
+        String token = JWTUtils.createToken(userDetails, securityProperties);
         response.addHeader(HttpHeaders.AUTHORIZATION, token);
 
-        UserDTO user = new UserDTO();
-        user.setUsername(username);
-        user.setRoles(roles);
+        UserDTO user = userDetailsMapper.toDto(userDetails);
 
         try {
             new ObjectMapper().writeValue(response.getOutputStream(), user);

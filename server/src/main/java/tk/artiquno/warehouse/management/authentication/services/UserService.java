@@ -2,7 +2,8 @@ package tk.artiquno.warehouse.management.authentication.services;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import tk.artiquno.warehouse.management.authentication.User;
+import tk.artiquno.warehouse.management.authentication.entities.User;
+import tk.artiquno.warehouse.management.authentication.exceptions.UsernameExistsException;
 import tk.artiquno.warehouse.management.swagger.dto.UserCredentialsDTO;
 import tk.artiquno.warehouse.management.swagger.dto.UserDTO;
 
@@ -38,7 +39,7 @@ public interface UserService {
      *
      * @param userCredentials The credentials to use for the new user
      * @return The created user
-     * @throws tk.artiquno.warehouse.management.authentication.UsernameExistsException if another user with the given username already exists
+     * @throws UsernameExistsException if another user with the given username already exists
      */
     UserDTO createUser(UserCredentialsDTO userCredentials);
 

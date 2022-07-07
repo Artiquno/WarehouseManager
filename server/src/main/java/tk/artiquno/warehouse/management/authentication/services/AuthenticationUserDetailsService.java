@@ -6,8 +6,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tk.artiquno.warehouse.management.authentication.User;
-import tk.artiquno.warehouse.management.authentication.mappers.StringToGrantedAuthorityMapper;
+import tk.artiquno.warehouse.management.authentication.entities.User;
+import tk.artiquno.warehouse.management.authentication.mappers.UserDetailsMapper;
 
 @Service
 public class AuthenticationUserDetailsService implements UserDetailsService {
@@ -15,7 +15,7 @@ public class AuthenticationUserDetailsService implements UserDetailsService {
     private UserService userService;
 
     @Autowired
-    private StringToGrantedAuthorityMapper rolesMapper;
+    private UserDetailsMapper userDetailsMapper;
 
     @Transactional(readOnly = true)
     @Override
@@ -26,9 +26,6 @@ public class AuthenticationUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("The given username does not exist");
         }
 
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                rolesMapper.toGrantedAuthority(user.getRoles()));
+        return userDetailsMapper.toUserDetails(user);
     }
 }

@@ -8,21 +8,20 @@ import tk.artiquno.warehouse.management.authentication.configurations.SecurityPr
 
 import java.time.Instant;
 import java.util.Date;
-import java.util.List;
 
 public class JWTUtils {
     /**
      * Create a JWT from the given claims and settings
-     * @param username The subject for the token
-     * @param roles The claims to be added to the token
+     * @param userDetails The user details to include in the claims
      * @param securityProperties Security properties to configure the token with
      * @return A JWT ready to be sent to the authenticated user. The result
      * includes the "Bearer " prefix
      */
-    public static String createToken(String username, List<String> roles, SecurityProperties securityProperties) {
+    public static String createToken(FullUserDetails userDetails, SecurityProperties securityProperties) {
         return "Bearer " + JWT.create()
-                .withSubject(username)
-                .withArrayClaim("roles", roles.toArray(new String[0]))
+                .withClaim("id", userDetails.getId())
+                .withSubject(userDetails.getUsername())
+                .withArrayClaim("roles", userDetails.getRoles().toArray(new String[0]))
                 .withExpiresAt(
                         Date.from(Instant.now().plus(securityProperties.getDuration())))
                 .sign(Algorithm.HMAC512(securityProperties.getSecret()));

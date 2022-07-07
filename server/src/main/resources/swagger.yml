@@ -547,6 +547,10 @@ components:
         deadlineDate:
           type: string
           format: date-time
+        owner:
+          # Ideally this would not include the roles, but
+          # it's not worth adding another model just for that
+          $ref: '#/components/schemas/UserDTO'
         status:
           $ref: '#/components/schemas/OrderStatus'
         items:

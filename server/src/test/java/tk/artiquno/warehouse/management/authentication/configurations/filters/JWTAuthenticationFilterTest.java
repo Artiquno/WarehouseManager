@@ -14,9 +14,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import tk.artiquno.warehouse.management.authentication.FullUserDetails;
 import tk.artiquno.warehouse.management.authentication.JWTUtils;
 import tk.artiquno.warehouse.management.authentication.configurations.SecurityProperties;
 import tk.artiquno.warehouse.management.authentication.mappers.StringToGrantedAuthorityMapper;
+import tk.artiquno.warehouse.management.authentication.mappers.UserDetailsMapper;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletOutputStream;
@@ -61,6 +63,9 @@ class JWTAuthenticationFilterTest {
     @Spy
     StringToGrantedAuthorityMapper rolesMapper = Mappers.getMapper(StringToGrantedAuthorityMapper.class);
 
+    @Spy
+    UserDetailsMapper userDetailsMapper = Mappers.getMapper(UserDetailsMapper.class);
+
     @InjectMocks
     JWTAuthenticationFilter authFilter;
 
@@ -83,7 +88,10 @@ class JWTAuthenticationFilterTest {
     void successfulAuthentication() throws IOException {
         List<String> roles = Arrays.asList(ROLES);
         List<GrantedAuthority> authorities = rolesMapper.toGrantedAuthority(roles);
-        org.springframework.security.core.userdetails.User principal = new User(USERNAME, "", authorities);
+        FullUserDetails principal = new FullUserDetails();
+        principal.setId(1L);
+        principal.setUsername(USERNAME);
+        principal.setRoles(roles);
         Authentication auth = new UsernamePasswordAuthenticationToken(principal, null, authorities);
 
         when(response.getOutputStream()).thenReturn(responseStream);

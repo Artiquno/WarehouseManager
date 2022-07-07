@@ -1,6 +1,5 @@
-package tk.artiquno.warehouse.management.authentication;
+package tk.artiquno.warehouse.management.authentication.exceptions;
 
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import tk.artiquno.warehouse.management.exceptions.ConflictException;
 

@@ -6,9 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import tk.artiquno.warehouse.management.authentication.FullUserDetails;
 import tk.artiquno.warehouse.management.authentication.JWTUtils;
+import tk.artiquno.warehouse.management.authentication.UserAuthenticationToken;
 import tk.artiquno.warehouse.management.authentication.configurations.SecurityProperties;
 import tk.artiquno.warehouse.management.authentication.mappers.StringToGrantedAuthorityMapper;
 
@@ -40,7 +43,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             return;
         }
 
-        UsernamePasswordAuthenticationToken authenticationToken = getAuthentication(token);
+        Authentication authenticationToken = getAuthentication(token);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         chain.doFilter(request, response);
     }
@@ -51,11 +54,9 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
      * @return An authentication token, or {@code null} if the token
      * param is invalid
      */
-    UsernamePasswordAuthenticationToken getAuthentication(String token) {
+    Authentication getAuthentication(String token) {
         if(token != null)
         {
-            String user;
-            List<String> roles;
             DecodedJWT verify;
             try
             {
@@ -66,12 +67,15 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
                 return null;
             }
 
-            user = verify.getSubject();
-            roles = getRoles(verify);
+            FullUserDetails details = new FullUserDetails();
+            details.setId(verify.getClaim("id").asLong());
+            details.setUsername(verify.getSubject());
+            details.setRoles(getRoles(verify));
+            details.setActive(true);
 
-            if(user != null)
+            if(details.getUsername() != null)
             {
-                return new UsernamePasswordAuthenticationToken(user, null, rolesMapper.toGrantedAuthority(roles));
+                return new UserAuthenticationToken(rolesMapper.toGrantedAuthority(details.getRoles()), details);
             }
         }
 

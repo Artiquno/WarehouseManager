@@ -7,8 +7,11 @@ import org.mapstruct.factory.Mappers;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import tk.artiquno.warehouse.management.authentication.entities.User;
+import tk.artiquno.warehouse.management.authentication.exceptions.UsernameExistsException;
 import tk.artiquno.warehouse.management.authentication.mappers.UserCredentialsMapper;
 import tk.artiquno.warehouse.management.authentication.mappers.UserMapper;
+import tk.artiquno.warehouse.management.authentication.repositories.UserRepo;
 import tk.artiquno.warehouse.management.authentication.services.UserServiceImpl;
 import tk.artiquno.warehouse.management.swagger.dto.UserCredentialsDTO;
 

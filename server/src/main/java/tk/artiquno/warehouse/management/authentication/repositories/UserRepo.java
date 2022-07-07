@@ -1,7 +1,8 @@
-package tk.artiquno.warehouse.management.authentication;
+package tk.artiquno.warehouse.management.authentication.repositories;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
+import tk.artiquno.warehouse.management.authentication.entities.User;
 
 import java.util.Optional;
 

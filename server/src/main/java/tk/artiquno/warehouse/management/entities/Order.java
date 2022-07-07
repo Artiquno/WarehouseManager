@@ -1,7 +1,7 @@
 package tk.artiquno.warehouse.management.entities;
 
 import lombok.Data;
-import tk.artiquno.warehouse.management.authentication.User;
+import tk.artiquno.warehouse.management.authentication.entities.User;
 import tk.artiquno.warehouse.management.swagger.dto.OrderStatus;
 
 import javax.persistence.*;

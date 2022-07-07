@@ -4,7 +4,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import tk.artiquno.warehouse.management.authentication.FullUserDetails;
+import tk.artiquno.warehouse.management.authentication.entities.User;
 import tk.artiquno.warehouse.management.entities.Order;
 import tk.artiquno.warehouse.management.exceptions.ConflictException;
 import tk.artiquno.warehouse.management.mappers.BasicOrdersMapper;
@@ -34,6 +37,11 @@ public class OrdersServiceImpl implements OrdersService {
         Order order = ordersMapper.toOrder(orderDTO);
         order.setStatus(OrderStatus.CREATED);
         order.setSubmittedDate(OffsetDateTime.now());
+
+        FullUserDetails principal = (FullUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User owner = new User();
+        owner.setId(principal.getId());
+        order.setOwner(owner);
 
         Order createdOrder = ordersRepo.save(order);
         return ordersMapper.toDto(createdOrder);

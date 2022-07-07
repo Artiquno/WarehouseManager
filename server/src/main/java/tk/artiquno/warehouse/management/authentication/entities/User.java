@@ -1,4 +1,4 @@
-package tk.artiquno.warehouse.management.authentication;
+package tk.artiquno.warehouse.management.authentication.entities;
 
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
@@ -14,6 +14,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Column(unique = true)
     private String username;
     private String password;
 

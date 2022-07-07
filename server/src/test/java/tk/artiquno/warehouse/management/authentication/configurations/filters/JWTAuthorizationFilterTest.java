@@ -12,9 +12,10 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import tk.artiquno.warehouse.management.authentication.FullUserDetails;
 import tk.artiquno.warehouse.management.authentication.JWTUtils;
 import tk.artiquno.warehouse.management.authentication.configurations.SecurityProperties;
 import tk.artiquno.warehouse.management.authentication.mappers.StringToGrantedAuthorityMapper;
@@ -78,8 +79,13 @@ class JWTAuthorizationFilterTest {
         badProperties.setSecret(BAD_SECRET);
         badProperties.setDuration(Duration.ofMinutes(10));
 
-        goodToken = JWTUtils.createToken(USERNAME, Arrays.asList(ROLES), securityProperties);
-        badToken = JWTUtils.createToken(USERNAME, Arrays.asList(ROLES), badProperties);
+        FullUserDetails userDetails = new FullUserDetails();
+        userDetails.setId(1L);
+        userDetails.setUsername(USERNAME);
+        userDetails.setRoles(Arrays.asList(ROLES));
+
+        goodToken = JWTUtils.createToken(userDetails, securityProperties);
+        badToken = JWTUtils.createToken(userDetails, badProperties);
 
         closeable = MockitoAnnotations.openMocks(this);
     }
@@ -91,15 +97,15 @@ class JWTAuthorizationFilterTest {
 
     @Test
     void getAuthentication() {
-        UsernamePasswordAuthenticationToken auth = authFilter.getAuthentication(goodToken);
-        String username = (String)auth.getPrincipal();
-        assertEquals(USERNAME, username);
+        Authentication auth = authFilter.getAuthentication(goodToken);
+        FullUserDetails userDetails = (FullUserDetails)auth.getPrincipal();
+        assertEquals(USERNAME, userDetails.getUsername());
         assertIterableEquals(Arrays.asList(ROLES), rolesMapper.toString(auth.getAuthorities()));
     }
 
     @Test
     void getAuthentication_BadToken() {
-        UsernamePasswordAuthenticationToken auth = authFilter.getAuthentication(badToken);
+        Authentication auth = authFilter.getAuthentication(badToken);
         assertNull(auth);
     }
 
@@ -108,7 +114,7 @@ class JWTAuthorizationFilterTest {
         when(request.getHeader(HttpHeaders.AUTHORIZATION))
                         .thenReturn(goodToken);
 
-        // When can't set this in the setup method because for some reason
+        // We can't set this in the setup method because for some reason
         // SecurityContextHolder.getContext() will return a different
         // SecurityContext mock
         SecurityContextHolder.setContext(securityContext);
