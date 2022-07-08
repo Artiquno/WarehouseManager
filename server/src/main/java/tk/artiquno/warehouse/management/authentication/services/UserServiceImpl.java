@@ -4,6 +4,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,7 +54,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getActiveUserByUsername(String username) {
         return userRepo.findByUsernameAndIsActive(username, true)
-                .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(() -> new UsernameNotFoundException("A user with this username does not exist"));
     }
 
     @Override

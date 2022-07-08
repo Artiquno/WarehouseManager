@@ -21,11 +21,6 @@ public class AuthenticationUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         final User user = userService.getActiveUserByUsername(username);
-        if(user == null)
-        {
-            throw new UsernameNotFoundException("The given username does not exist");
-        }
-
         return userDetailsMapper.toUserDetails(user);
     }
 }
