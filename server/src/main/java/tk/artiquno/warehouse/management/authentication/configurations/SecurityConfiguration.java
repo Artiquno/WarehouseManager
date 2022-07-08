@@ -12,6 +12,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -26,6 +27,44 @@ import tk.artiquno.warehouse.management.authentication.services.AuthenticationUs
 public class SecurityConfiguration {
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    private static void setupAuthorization(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {
+        // Since we're using Swagger to generate our APIs we can't
+        // use annotations for authorization...
+        // Unless we create our own templates
+
+        authorize
+                .antMatchers(HttpMethod.GET, "/orders", "/order/*").hasAnyRole("WAREHOUSE_MANAGER", "CLIENT")
+
+                .antMatchers(HttpMethod.PUT,
+                        "/orders/*/decline",
+                        "/orders/*/approve",
+                        "/orders/*/fulfill").hasRole("WAREHOUSE_MANAGER")
+                .antMatchers(HttpMethod.POST, "/orders/schedule-delivery").hasRole("WAREHOUSE_MANAGER")
+
+                .antMatchers(HttpMethod.POST, "/orders").hasRole("CLIENT")
+                .antMatchers(HttpMethod.PUT,
+                        "/orders",
+                        "/orders/*/submit",
+                        "/orders/*/cancel").hasRole("CLIENT")
+
+                .antMatchers("/trucks", "/trucks/*").hasRole("WAREHOUSE_MANAGER")
+
+                .antMatchers("/items", "/items/*").hasRole("WAREHOUSE_MANAGER")
+
+                .antMatchers("/users", "/users/*").hasRole("SYSTEM_ADMIN")
+                .antMatchers("/users/reset-password").authenticated()
+
+                // Allow anyone to create a default user since if you're creating it then no one can log in
+                .antMatchers(HttpMethod.POST, "/users/create-default").permitAll()
+
+                // Allow anyone to view the docs
+                .antMatchers("/swagger-ui/*",
+                        "/swagger-ui.html",
+                        "/v3/api-docs",
+                        "/v3/api-docs/*").permitAll()
+                .anyRequest().authenticated();
+    }
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -59,19 +98,7 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests((authorize) -> authorize
-                        // Since we're using Swagger to generate out APIs we can't
-                        // use annotations for authorization...
-                        .antMatchers("/users").hasRole("SYSTEM_ADMIN")
-                        .antMatchers("/users/reset-password").authenticated()
-                        // Allow anyone to create a default user
-                        .antMatchers(HttpMethod.POST, "/users/create-default").permitAll()
-                        // Allow anyone to view the docs
-                        .antMatchers("/swagger-ui/*",
-                                "/swagger-ui.html",
-                                "/v3/api-docs",
-                                "/v3/api-docs/*").permitAll()
-                        .anyRequest().authenticated())
+        http.authorizeHttpRequests(SecurityConfiguration::setupAuthorization)
                 .addFilter(jwtAuthenticationFilter())
                 .addFilter(jwtAuthorizationFilter())
                 .csrf().disable();

@@ -176,6 +176,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/OrderDTO'
 
+  # This one should have been on its own controller
   /orders/schedule-delivery:
     post:
       summary: Schedule delivery for all the approved orders
