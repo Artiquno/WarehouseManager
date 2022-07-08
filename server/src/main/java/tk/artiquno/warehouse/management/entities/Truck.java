@@ -14,11 +14,11 @@ public class Truck {
     private long id;
 
     @NotNull
-    // @Length(min = 17, max = 17)
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String chassis;
+
     @NotNull
     @NotEmpty
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String licensePlate;
 }
