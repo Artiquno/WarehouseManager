@@ -1,6 +1,9 @@
 package tk.artiquno.warehouse.management.authentication.configurations.filters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.logging.log4j.LogManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,6 +32,9 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Autowired
     private UserDetailsMapper userDetailsMapper;
+
+    private static final Logger log = LoggerFactory.getLogger(JWTAuthenticationFilter.class);
+    private static final org.apache.logging.log4j.Logger logger = LogManager.getLogger(JWTAuthenticationFilter.class);
 
     public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);
@@ -61,6 +67,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             HttpServletResponse response,
                                             FilterChain chain,
                                             Authentication auth) {
+        logger.info("Welcome home good hunter");
+
         FullUserDetails userDetails = (FullUserDetails)auth.getPrincipal();
 
         String token = JWTUtils.createToken(userDetails, securityProperties);
