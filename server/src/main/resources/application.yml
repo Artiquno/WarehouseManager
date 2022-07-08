@@ -5,7 +5,6 @@ spring.datasource:
   # Change the driver name to whatever Connector uses
   driver-class-name: "org.mariadb.jdbc.Driver"
 
-
 spring.jpa.hibernate.ddl-auto: "none"
 
 authentication:
@@ -15,9 +14,9 @@ authentication:
   duration: "10m"
   default-user:
     # Credentials for the default user
-    username: ""
-    password: ""
-    email: ""
+    username: "admin"
+    password: "password"
+    email: "admin@email.com"
     roles:
       - "ROLE_SYSTEM_ADMIN"
 
