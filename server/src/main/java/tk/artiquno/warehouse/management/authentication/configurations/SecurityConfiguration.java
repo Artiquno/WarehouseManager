@@ -16,6 +16,8 @@ import org.springframework.security.config.annotation.web.configurers.AuthorizeH
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import tk.artiquno.warehouse.management.authentication.configurations.filters.JWTAuthenticationFilter;
 import tk.artiquno.warehouse.management.authentication.configurations.filters.JWTAuthorizationFilter;
 import tk.artiquno.warehouse.management.authentication.services.AuthenticationUserDetailsService;
@@ -52,11 +54,11 @@ public class SecurityConfiguration {
 
                 .antMatchers("/items", "/items/*").hasRole("WAREHOUSE_MANAGER")
 
-                .antMatchers("/users", "/users/*").hasRole("SYSTEM_ADMIN")
-                .antMatchers("/users/reset-password").authenticated()
-
                 // Allow anyone to create a default user since if you're creating it then no one can log in
                 .antMatchers(HttpMethod.POST, "/users/create-default").permitAll()
+
+                .antMatchers("/users", "/users/*").hasRole("SYSTEM_ADMIN")
+                .antMatchers("/users/reset-password").authenticated()
 
                 // Allow anyone to view the docs
                 .antMatchers("/swagger-ui/*",
@@ -97,8 +99,20 @@ public class SecurityConfiguration {
     }
 
     @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:4200");
+            }
+        };
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(SecurityConfiguration::setupAuthorization)
+        http.cors().and()
+                .authorizeHttpRequests(SecurityConfiguration::setupAuthorization)
                 .addFilter(jwtAuthenticationFilter())
                 .addFilter(jwtAuthorizationFilter())
                 .csrf().disable();
