@@ -9,8 +9,8 @@ import { AuthenticationService } from '../authentication.service';
   styleUrls: ['./sign-in.component.css']
 })
 export class SignInComponent implements OnInit {
-  username: string = "";
-  password: string = "";
+  username: string = "endri";
+  password: string = "hello there";
 
   constructor(private authService: AuthenticationService,
     private router: Router) { }

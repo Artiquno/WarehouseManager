@@ -12,7 +12,9 @@ export class AuthenticationService {
   private token: string | null = null;
   private userInfo: UserInfo | null = null;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    this.token = localStorage.getItem("authToken");
+  }
 
   logIn(username: string, password: string): Observable<HttpResponse<UserInfo>> {
     let result = this.http.post<UserInfo>(Constants.BASE_URL + "/login", {
@@ -33,6 +35,7 @@ export class AuthenticationService {
       if(response.headers.has("Authorization"))
       {
         this.token = response.headers.get("Authorization");
+        localStorage.setItem("authToken", this.token ?? "Bearer of the curse");
       }
     });
 
@@ -49,5 +52,9 @@ export class AuthenticationService {
 
   isAuthenticated(): boolean {
     return this.token !== null && this.token.length > 1;
+  }
+
+  createDefaultUser(): Observable<void> {
+    return this.http.post<void>(Constants.BASE_URL + "/users/create-default", {});
   }
 }

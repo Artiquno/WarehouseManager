@@ -24,7 +24,7 @@ export class TruckDetailsComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    
+    this.refreshTruck();
   }
   
   refreshTruck(): void {

@@ -1,0 +1,12 @@
+<form>
+    <div>
+        <label for="chassis">Chassis: </label>
+        <input name="chassis" [(ngModel)]="truck.chassis" />
+    </div>
+    <div>
+        <label for="licensePlate">License Plate: </label>
+        <input name="licensePlate" [(ngModel)]="truck.licensePlate" />
+    </div>
+
+    <button type="submit" (click)="saveTruck()">Save</button>
+</form>

@@ -1,9 +1,15 @@
+<div>
+    <a routerLink="/trucks/create">Create truck</a>
+</div>
+
 <ul>
     <li *ngFor="let truck of trucks">
-        <button>
+        <a routerLink="/trucks/{{truck.id}}">
             <span>{{ truck.id }}</span>
             <span>{{ truck.chassis }}</span>
             <span>{{ truck.licensePlate }}</span>
-        </button>
+
+            <a type="button" routerLink="/trucks/{{truck.id}}/edit">Edit</a>
+        </a>
     </li>
 </ul>

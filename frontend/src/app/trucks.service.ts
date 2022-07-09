@@ -4,6 +4,7 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
 
 import { Truck } from './trucks/truck';
 import { Constants } from './constants';
+import { Page } from './models/Page';
 
 @Injectable({
   providedIn: 'root'
@@ -34,11 +35,23 @@ export class TrucksService {
 
   constructor(private http: HttpClient) { }
 
-  getTrucks(): Observable<Truck[]> {
-    return this.http.get<Truck[]>(Constants.BASE_URL + "/trucks");
+  getTrucks(): Observable<Page<Truck>> {
+    return this.http.get<Page<Truck>>(Constants.BASE_URL + "/trucks");
   }
 
   getTruck(id: number): Observable<Truck> {
-    return of(this.trucks[0]);
+    return this.http.get<Truck>(Constants.BASE_URL + "/trucks/" + id);
+  }
+
+  updateTruck(truck: Truck): Observable<Truck> {
+    return this.http.put<Truck>(Constants.BASE_URL + "/trucks", truck, {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+  }
+
+  createTruck(truck: Truck): Observable<Truck> {
+    return this.http.post<Truck>(Constants.BASE_URL + "/trucks", truck);
   }
 }

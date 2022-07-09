@@ -10,6 +10,7 @@ import { TruckDetailsComponent } from './truck-details/truck-details.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthorizationInterceptor } from './authorization.interceptor';
 import { SignInComponent } from './sign-in/sign-in.component';
+import { EditTruckComponent } from './edit-truck/edit-truck.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { SignInComponent } from './sign-in/sign-in.component';
     TrucksComponent,
     TruckDetailsComponent,
     DashboardComponent,
-    SignInComponent
+    SignInComponent,
+    EditTruckComponent
   ],
   imports: [
     BrowserModule,
