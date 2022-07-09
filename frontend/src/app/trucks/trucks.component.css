@@ -1,0 +1,13 @@
+ul {
+    list-style: none;
+}
+li span {
+    margin: 2px 4px;
+}
+li > button {
+    background-color: transparent;
+    border: none;
+}
+li > button:hover {
+    background-color: #f0f0f0;
+}
