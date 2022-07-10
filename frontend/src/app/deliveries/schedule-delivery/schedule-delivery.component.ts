@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 import { Schedule } from 'src/app/models/Schedule';
 import { Truck } from 'src/app/models/Truck';
-import { SchedulesService } from 'src/app/services/schedules/schedules.service';
+import { DeliveriesService } from 'src/app/services/deliveries/deliveries.service';
 import { TrucksService } from 'src/app/services/trucks/trucks.service';
 
 @Component({
@@ -21,7 +21,7 @@ export class ScheduleDeliveryComponent implements OnInit {
     deliveryResponse: string = "";
 
     constructor(private trucksService: TrucksService,
-                private schedulesService: SchedulesService) { }
+                private deliveriesService: DeliveriesService) { }
 
     ngOnInit(): void {
         this.getTrucks();
@@ -33,7 +33,7 @@ export class ScheduleDeliveryComponent implements OnInit {
     }
 
     save(): void {
-        this.schedulesService.createSchedule(this.schedule)
+        this.deliveriesService.createSchedule(this.schedule)
         .pipe(
             catchError((error, caught) => {
                 this.deliveryResponse = error.error.message;
