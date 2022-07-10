@@ -1,0 +1,15 @@
+<div>
+    <a routerLink="/orders/create">Create order</a>
+</div>
+
+<ul>
+    <li *ngFor="let order of orders">
+        <a routerLink="/orders/{{order.id}}">
+            <span>{{ order.id }}</span>
+            <span>{{ order.status }}</span>
+            <span>{{ order.submittedDate }}</span>
+
+            <a type="button" routerLink="/orders/{{order.id}}/edit">Edit</a>
+        </a>
+    </li>
+</ul>

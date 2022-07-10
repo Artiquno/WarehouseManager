@@ -11,6 +11,16 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthorizationInterceptor } from './authorization.interceptor';
 import { SignInComponent } from './sign-in/sign-in.component';
 import { EditTruckComponent } from './edit-truck/edit-truck.component';
+import { OrdersComponent } from './orders/orders/orders.component';
+import { OrderDetailsComponent } from './orders/order-details/order-details.component';
+import { EditOrderComponent } from './orders/edit-order/edit-order.component';
+import { UsersComponent } from './users/users/users.component';
+import { UserDetailsComponent } from './users/user-details/user-details.component';
+import { EditUserComponent } from './users/edit-user/edit-user.component';
+import { ItemsComponent } from './items/items/items.component';
+import { EditItemComponent } from './items/edit-item/edit-item.component';
+import { ItemDetailsComponent } from './items/item-details/item-details.component';
+import { ScheduleDeliveryComponent } from './deliveries/schedule-delivery/schedule-delivery.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +29,17 @@ import { EditTruckComponent } from './edit-truck/edit-truck.component';
     TruckDetailsComponent,
     DashboardComponent,
     SignInComponent,
-    EditTruckComponent
+    EditTruckComponent,
+    OrdersComponent,
+    OrderDetailsComponent,
+    EditOrderComponent,
+    UsersComponent,
+    UserDetailsComponent,
+    EditUserComponent,
+    ItemsComponent,
+    EditItemComponent,
+    ItemDetailsComponent,
+    ScheduleDeliveryComponent
   ],
   imports: [
     BrowserModule,

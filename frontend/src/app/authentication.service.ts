@@ -53,10 +53,4 @@ export class AuthenticationService {
   isAuthenticated(): boolean {
     return this.token !== null && this.token.length > 1;
   }
-
-  createDefaultUser(): Observable<string> {
-    return this.http.post(Constants.BASE_URL + "/users/create-default", {}, {
-      responseType: "text"
-    });
-  }
 }

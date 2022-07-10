@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { HttpHeaders, HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
-import { Truck } from '../../trucks/truck';
+import { Truck } from '../../models/Truck';
 import { Constants } from '../../constants';
 import { Page } from '../../models/Page';
 
@@ -10,29 +10,6 @@ import { Page } from '../../models/Page';
   providedIn: 'root'
 })
 export class TrucksService {
-  trucks: Truck[] = [
-    {
-      id: 1,
-      chassis: "Hello",
-      licensePlate: "There"
-    },
-    {
-      id: 2,
-      chassis: "Meh",
-      licensePlate: "Eh"
-    },
-    {
-      id: 3,
-      chassis: "Bah",
-      licensePlate: "Pff"
-    },
-    {
-      id: 4,
-      chassis: "Ugh",
-      licensePlate: "Hmm"
-    }
-  ];
-
   constructor(private http: HttpClient) { }
 
   getTrucks(): Observable<Page<Truck>> {
@@ -44,11 +21,7 @@ export class TrucksService {
   }
 
   updateTruck(truck: Truck): Observable<Truck> {
-    return this.http.put<Truck>(Constants.BASE_URL + "/trucks", truck, {
-      headers: {
-        "Content-Type": "application/json"
-      }
-    });
+    return this.http.put<Truck>(Constants.BASE_URL + "/trucks", truck);
   }
 
   createTruck(truck: Truck): Observable<Truck> {

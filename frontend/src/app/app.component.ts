@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { AuthenticationService } from './authentication.service';
+import { Component } from '@angular/core';
+import { UsersService } from './services/users/users.service';
 
 @Component({
     selector: 'app-root',
@@ -9,7 +9,7 @@ import { AuthenticationService } from './authentication.service';
 export class AppComponent {
     title = 'Warehouse Manager';
 
-    constructor(private usersService: AuthenticationService) { }
+    constructor(private usersService: UsersService) { }
 
     createDefaultUser(button: HTMLButtonElement): void {
         this.usersService.createDefaultUser()
