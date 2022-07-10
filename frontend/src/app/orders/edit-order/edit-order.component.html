@@ -1,1 +1,19 @@
-<p>edit-order works!</p>
+<form>
+    <div>
+        <label for="items">Items: </label>
+
+        <ng-select name="items"
+                   [items]="items"
+                   bindLabel="item.name"
+                   [(ngModel)]="order.items"
+                   [multiple]="true">
+        </ng-select>
+
+        <div *ngFor="let item of order.items">
+            <span>{{item.item.name}}</span>
+            <input name="requestedQuantity" [(ngModel)]="item.requestedQuantity" />
+        </div>
+    </div>
+
+    <button type="submit" (click)="saveOrder()">Save</button>
+</form>

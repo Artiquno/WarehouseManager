@@ -14,8 +14,7 @@ export class TruckDetailsComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private trucksService: TrucksService,
-    private location: Location) { }
+    private trucksService: TrucksService) { }
 
   truck: Truck = {
     id: 0,
@@ -31,9 +30,5 @@ export class TruckDetailsComponent implements OnInit {
     let id: number = Number(this.route.snapshot.paramMap.get("id"));
     this.trucksService.getTruck(id)
         .subscribe(truck => this.truck = truck);
-  }
-
-  goBack(): void {
-    this.location.back();
   }
 }

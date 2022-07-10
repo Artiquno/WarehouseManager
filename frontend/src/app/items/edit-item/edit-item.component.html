@@ -1,1 +1,16 @@
-<p>edit-item works!</p>
+<form>
+    <div>
+        <label for="name">Name: </label>
+        <input name="name" [(ngModel)]="item.name" />
+    </div>
+    <div>
+        <label for="quantityInStock">Quantity in stock: </label>
+        <input type="number" name="quantityInStock" [(ngModel)]="item.quantityInStock" />
+    </div>
+    <div>
+        <label for="unitPrice">Unit Price: </label>
+        <input type="number" name="unitPrice" [(ngModel)]="item.unitPrice" />
+    </div>
+
+    <button type="submit" (click)="saveItem()">Save</button>
+</form>

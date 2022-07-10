@@ -1,1 +1,26 @@
-<p>order-details works!</p>
+<div>
+    Submitted Date: {{ order.submittedDate }}
+</div>
+<div>
+    Deadline Date: {{ order.deadlineDate }}
+</div>
+<div>
+    Owner: {{ order.owner.email }}
+</div>
+<div>
+    Status: {{ order.status }}
+</div>
+<div>
+    Items:
+    <div *ngFor="let item of order.items">
+        <div>
+            Name: {{ item.item.name }}
+        </div>
+        <div>
+            Requested quantity: {{ item.requestedQuantity }}
+        </div>
+        <div>
+            Quantity in stock: {{ item.item.quantityInStock }}
+        </div>
+    </div>
+</div>

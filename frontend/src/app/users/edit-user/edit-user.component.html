@@ -1,1 +1,21 @@
-<p>edit-user works!</p>
+<form>
+    <div>
+        <label for="username">Username: </label>
+        <input name="username" [(ngModel)]="user.username" />
+    </div>
+    <div>
+        <label for="email">Email: </label>
+        <input name="email" [(ngModel)]="user.email" />
+    </div>
+    <div>
+        <label for="roles">Roles: </label>
+        <ng-select name="roles"
+                   [items]="roles"
+                   placeholder="Roles"
+                   [(ngModel)]="user.roles"
+                   [multiple]="true">
+        </ng-select>
+    </div>
+
+    <button type="submit" (click)="saveUser()">Save</button>
+</form>

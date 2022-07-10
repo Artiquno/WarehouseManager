@@ -1,1 +1,9 @@
-<p>user-details works!</p>
+<div>
+    Username: {{ user.username }}
+</div>
+<div>
+    Email: {{ user.email }}
+</div>
+<div>
+    Roles: <span *ngFor="let role of user.roles">{{role}}, </span>
+</div>

@@ -1,12 +1,13 @@
 import { Item } from "./Item";
+import { OrderedItem } from "./OrderedItem";
 import { OrderStatus } from "./OrderStatus";
-import { UserInfo } from "./UserInfo";
+import { User } from "./UserInfo";
 
 export interface Order {
     id: number;
     submittedDate: Date;
     deadlineDate: Date;
-    owner: UserInfo;
+    owner: User;
     status: OrderStatus;
-    items?: Item[];
+    items?: OrderedItem[];
 }

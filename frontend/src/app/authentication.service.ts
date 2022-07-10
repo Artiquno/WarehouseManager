@@ -2,7 +2,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
 import { Constants } from './constants';
-import { UserInfo as UserInfo } from './models/UserInfo';
+import { User as User } from './models/UserInfo';
 
 @Injectable({
   providedIn: 'root'
@@ -10,14 +10,14 @@ import { UserInfo as UserInfo } from './models/UserInfo';
 export class AuthenticationService {
 
   private token: string | null = null;
-  private userInfo: UserInfo | null = null;
+  private userInfo: User | null = null;
 
   constructor(private http: HttpClient) {
     this.token = localStorage.getItem("authToken");
   }
 
-  logIn(username: string, password: string): Observable<HttpResponse<UserInfo>> {
-    let result = this.http.post<UserInfo>(Constants.BASE_URL + "/login", {
+  logIn(username: string, password: string): Observable<HttpResponse<User>> {
+    let result = this.http.post<User>(Constants.BASE_URL + "/login", {
       "username": username,
       "password": password
     },
@@ -46,7 +46,7 @@ export class AuthenticationService {
     return this.token;
   }
 
-  getUserInfo(): UserInfo | null {
+  getUserInfo(): User | null {
     return this.userInfo;
   }
 

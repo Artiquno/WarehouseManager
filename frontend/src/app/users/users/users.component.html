@@ -1,1 +1,17 @@
-<p>users works!</p>
+<div>
+    <a routerLink="/users/create">Create user</a>
+</div>
+
+<ul>
+    <li *ngFor="let user of users">
+        <a routerLink="/users/{{user.id}}">
+            <span>{{ user.id }}</span>
+            <span>{{ user.email }}</span>
+            <span>{{ user.username }}</span>
+
+            <span *ngFor="let role of user.roles">{{role}},</span>
+
+            <a type="button" routerLink="/users/{{user.id}}/edit">Edit</a>
+        </a>
+    </li>
+</ul>

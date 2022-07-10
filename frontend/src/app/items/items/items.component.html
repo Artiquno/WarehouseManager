@@ -1,1 +1,15 @@
-<p>items works!</p>
+<div>
+    <a routerLink="/items/create">Create item</a>
+</div>
+
+<ul>
+    <li *ngFor="let item of items">
+        <a routerLink="/items/{{item.id}}">
+            <span>{{ item.id }}</span>
+            <span>{{ item.name }}</span>
+            <span>{{ item.quantityInStock }}</span>
+
+            <a type="button" routerLink="/items/{{item.id}}/edit">Edit</a>
+        </a>
+    </li>
+</ul>
