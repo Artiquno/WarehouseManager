@@ -62,14 +62,14 @@ public class DeliveriesServiceImpl implements DeliveriesService {
 
         // Tell the trucks about the delivery maybe?
 
-        // Mark all the affected orders as UNDER_DELIVERY
-        ordersForDelivery.forEach(order -> ordersService.updateOrderStatus(order.getId(), OrderStatus.UNDER_DELIVERY));
-
         // Update item stock quantities in the db
         orderedItems.stream()
                 .peek(this::updateItemsInStock)
                 .flatMap(orderedItem -> Stream.of(orderedItem.getItem()))
                 .forEach(itemsService::updateItem);
+
+        // Mark all the affected orders as UNDER_DELIVERY
+        ordersForDelivery.forEach(order -> ordersService.updateOrderStatus(order.getId(), OrderStatus.UNDER_DELIVERY));
 
         // Act like the delivery was saved somewhere
 
