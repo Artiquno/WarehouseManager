@@ -1,5 +1,15 @@
 <div>
     <a routerLink="/trucks/create">Create truck</a>
+
+    <button (click)="prevPage()">Previous</button>
+    <select name="pageSize" [(ngModel)]="pageSize" (change)="getTrucks()">
+        <option [value]="1">1</option>
+        <option [value]="5">5</option>
+        <option [value]="10">10</option>
+        <option [value]="20">20</option>
+        <option [value]="50">50</option>
+    </select>
+    <button (click)="nextPage()">Next</button>
 </div>
 
 <ul>

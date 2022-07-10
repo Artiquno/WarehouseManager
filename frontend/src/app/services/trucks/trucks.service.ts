@@ -12,8 +12,8 @@ import { Page } from '../../models/Page';
 export class TrucksService {
   constructor(private http: HttpClient) { }
 
-  getTrucks(): Observable<Page<Truck>> {
-    return this.http.get<Page<Truck>>(Constants.BASE_URL + "/trucks");
+  getTrucks(pageSize?: number, pageNr?: number): Observable<Page<Truck>> {
+    return this.http.get<Page<Truck>>(Constants.BASE_URL + `/trucks?page=${pageNr}&size=${pageSize}`);
   }
 
   getTruck(id: number): Observable<Truck> {

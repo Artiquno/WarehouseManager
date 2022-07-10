@@ -12,8 +12,8 @@ export class ItemsService {
 
   constructor(private http: HttpClient) { }
 
-  getItems(): Observable<Page<Item>> {
-    return this.http.get<Page<Item>>(Constants.BASE_URL + "/items");
+  getItems(pageSize?: number, pageNr?: number): Observable<Page<Item>> {
+    return this.http.get<Page<Item>>(Constants.BASE_URL + `/items?page=${pageNr}&size=${pageSize}`);
   }
 
   getItem(id: number): Observable<Item> {

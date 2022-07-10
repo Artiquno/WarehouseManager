@@ -4,27 +4,39 @@ import { Page } from 'src/app/models/Page';
 import { ItemsService } from 'src/app/services/items/items.service';
 
 @Component({
-  selector: 'app-items',
-  templateUrl: './items.component.html',
-  styleUrls: ['./items.component.css']
+    selector: 'app-items',
+    templateUrl: './items.component.html',
+    styleUrls: ['./items.component.css']
 })
 export class ItemsComponent implements OnInit {
+    
+    items: Item[] = [];
+    page: Page<Item> | null = null;
+    
+    pageNr: number = 0;
+    pageSize: number = 10;
+    
+    constructor(private itemsService: ItemsService) { }
 
-  constructor(private itemsService: ItemsService) { }
+    ngOnInit(): void {
+        this.getItems();
+    }
 
-  items: Item[] = [];
-  page: Page<Item> | null = null;
+    getItems(): void {
+        this.itemsService.getItems(this.pageSize, this.pageNr)
+            .subscribe(page => {
+                this.items = page.content
+                this.page = page;
+            });
+    }
 
-  ngOnInit(): void {
-    this.getItems();
-  }
+    nextPage(): void {
+        this.pageNr += 1;
+        this.getItems();
+    }
 
-  getItems(): void {
-    this.itemsService.getItems()
-        .subscribe(page => {
-          this.items = page.content
-          this.page = page;
-        });
-  }
-
+    prevPage(): void {
+        this.pageNr -= 1;
+        this.getItems();
+    }
 }

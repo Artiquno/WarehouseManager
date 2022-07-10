@@ -12,8 +12,8 @@ export class UsersService {
 
   constructor(private http: HttpClient) { }
 
-  getUsers(): Observable<Page<User>> {
-    return this.http.get<Page<User>>(Constants.BASE_URL + "/users");
+  getUsers(pageSize?: number, pageNr?: number): Observable<Page<User>> {
+    return this.http.get<Page<User>>(Constants.BASE_URL + `/users?page=${pageNr}&size=${pageSize}`);
   }
 
   getUser(id: number): Observable<User> {

@@ -15,6 +15,9 @@ export class OrdersComponent implements OnInit {
 
   statusFilter: string | null = null;
 
+  pageNr: number = 0;
+  pageSize: number = 10;
+
   constructor(private ordersService: OrdersService) {}
 
   ngOnInit(): void {
@@ -22,11 +25,20 @@ export class OrdersComponent implements OnInit {
   }
 
   getOrders(): void {
-    this.ordersService.getOrders(this.statusFilter)
+    this.ordersService.getOrders(this.statusFilter, this.pageSize, this.pageNr)
         .subscribe(page => {
           this.orders = page.content
           this.page = page;
         });
   }
 
+  nextPage(): void {
+    this.pageNr += 1;
+    this.getOrders();
+  }
+
+  prevPage(): void {
+    this.pageNr -= 1;
+    this.getOrders();
+  }
 }
