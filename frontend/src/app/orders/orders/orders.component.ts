@@ -13,6 +13,8 @@ export class OrdersComponent implements OnInit {
   orders: Order[] = [];
   page: Page<Order> | null = null;
 
+  statusFilter: string | null = null;
+
   constructor(private ordersService: OrdersService) {}
 
   ngOnInit(): void {
@@ -20,7 +22,7 @@ export class OrdersComponent implements OnInit {
   }
 
   getOrders(): void {
-    this.ordersService.getOrders()
+    this.ordersService.getOrders(this.statusFilter)
         .subscribe(page => {
           this.orders = page.content
           this.page = page;

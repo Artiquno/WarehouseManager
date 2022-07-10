@@ -1,5 +1,16 @@
 <div>
     <a routerLink="/orders/create">Create order</a>
+
+    <select name="statusFilter" [(ngModel)]="statusFilter" (change)="getOrders()">
+        <option value="">All</option>
+        <option>CREATED</option>
+        <option>AWAITING_APPROVAL</option>
+        <option>APPROVED</option>
+        <option>DECLINED</option>
+        <option>UNDER_DELIVERY</option>
+        <option>FULFILLED</option>
+        <option>CANCELLED</option>
+    </select>
 </div>
 
 <ul>

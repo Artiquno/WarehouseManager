@@ -12,8 +12,9 @@ export class OrdersService {
 
   constructor(private http: HttpClient) { }
 
-  getOrders(): Observable<Page<Order>> {
-    return this.http.get<Page<Order>>(Constants.BASE_URL + "/orders");
+  getOrders(filter: string | null): Observable<Page<Order>> {
+    const appended = filter !== null ? ("?status=" + filter) : "";
+    return this.http.get<Page<Order>>(Constants.BASE_URL + "/orders" + appended);
   }
 
   getOrder(id: number): Observable<Order> {
