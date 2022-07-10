@@ -24,3 +24,8 @@
         </div>
     </div>
 </div>
+
+<div>
+    <button *ngFor="let stateChange of transitions[order.status]"
+            (click)="changeStatus(stateChange.api)">{{ stateChange.action }}</button>
+</div>

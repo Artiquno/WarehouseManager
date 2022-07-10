@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { catchError, throwError } from 'rxjs';
 import { Schedule } from 'src/app/models/Schedule';
 import { Truck } from 'src/app/models/Truck';
 import { SchedulesService } from 'src/app/services/schedules/schedules.service';
@@ -17,6 +18,8 @@ export class ScheduleDeliveryComponent implements OnInit {
 
     trucks: Truck[] = [];
 
+    deliveryResponse: string = "";
+
     constructor(private trucksService: TrucksService,
                 private schedulesService: SchedulesService) { }
 
@@ -31,6 +34,12 @@ export class ScheduleDeliveryComponent implements OnInit {
 
     save(): void {
         this.schedulesService.createSchedule(this.schedule)
-            .subscribe(response => console.log("Delivery was scheduled successfully!"));
+        .pipe(
+            catchError((error, caught) => {
+                this.deliveryResponse = error.error.message;
+                return throwError(() => new Error("Could not schedule delivery"));
+            })
+        )
+        .subscribe(response => this.deliveryResponse = response.result);
   }
 }

@@ -27,4 +27,8 @@ export class OrdersService {
   createOrder(order: Order): Observable<Order> {
     return this.http.post<Order>(Constants.BASE_URL + "/orders", order);
   }
+
+  changeStatus(orderId: number, api: string): Observable<Order> {
+    return this.http.put<Order>(`${Constants.BASE_URL}/orders/${orderId}/${api}`, {});
+  }
 }
