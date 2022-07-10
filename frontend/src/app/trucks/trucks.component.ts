@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { Truck } from './truck';
-import { TrucksService } from '../trucks.service';
+import { TrucksService } from '../services/trucks/trucks.service';
 import { Page } from '../models/Page';
 
 @Component({

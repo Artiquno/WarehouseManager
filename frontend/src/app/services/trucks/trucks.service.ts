@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 
-import { Truck } from './trucks/truck';
-import { Constants } from './constants';
-import { Page } from './models/Page';
+import { Truck } from '../../trucks/truck';
+import { Constants } from '../../constants';
+import { Page } from '../../models/Page';
 
 @Injectable({
   providedIn: 'root'

@@ -2,7 +2,7 @@ import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { TrucksService } from '../trucks.service';
+import { TrucksService } from '../services/trucks/trucks.service';
 import { Truck } from '../trucks/truck';
 
 @Component({
