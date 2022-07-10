@@ -1,1 +1,15 @@
-<p>schedule-delivery works!</p>
+<form>
+    <div>
+        <label for="deliveryDate">Delivery date: </label>
+        <input type="date" name="deliveryDate" [(ngModel)]="schedule.deliveryDate" />
+    </div>
+
+    <ng-select name="trucks"
+               [items]="trucks"
+               bindLabel="chassis"
+               [(ngModel)]="schedule.trucks"
+               [multiple]="true">
+    </ng-select>
+
+    <button type="submit" (click)="save()">Schedule</button>
+</form>
