@@ -2,10 +2,13 @@
 <nav>
     <a routerLink="/">Home</a>
     <a routerLink="/trucks">Trucks</a>
+    <a routerLink="/items">Items</a>
+    <a routerLink="/orders">Orders</a>
+    <a routerLink="/users">Users</a>
 
     <a routerLink="/login">Sign in</a>
 
-    <button type="link" (click)="createDefaultUser()">Create Default User</button>
+    <button type="link" (click)="createDefaultUser(defaultButton)" #defaultButton>Create Default User</button>
 </nav>
 
 <router-outlet></router-outlet>

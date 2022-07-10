@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { AuthenticationService } from './authentication.service';
 
 @Component({
@@ -11,8 +11,12 @@ export class AppComponent {
 
     constructor(private usersService: AuthenticationService) { }
 
-    createDefaultUser(): void {
+    createDefaultUser(button: HTMLButtonElement): void {
         this.usersService.createDefaultUser()
-            .subscribe(() => console.log("User created"));
+            .subscribe((resp) => {
+                button.textContent = "Done";
+                button.disabled = true;
+                console.log("User created");
+            });
     }
 }
